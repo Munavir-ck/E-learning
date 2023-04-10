@@ -1,0 +1,22 @@
+import multer from "multer"
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+      cb(null, 'media/uploads')
+    },
+    filename: function(req, file, cb) {
+      cb(null, Date.now() + '-' + file.originalname)
+    }
+  })
+
+  const upload=multer({
+  storage:storage,
+  limits:{
+    fileSize:1024*1024*50
+  }
+
+
+  })   
+  const Upload=upload.single('file')
+export default  Upload
+      
