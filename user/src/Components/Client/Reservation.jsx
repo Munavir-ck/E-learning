@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import "tailwindcss/tailwind.css";
 import Modal from "react-modal";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import Paypal from "./Paypal/Paypal";
 import { useSelector } from "react-redux";
 import 'react-toastify/dist/ReactToastify.css';
 import {ToastContainer,toast} from "react-toastify"
@@ -20,11 +20,13 @@ function Reservation() {
   const [filterdSlot, setFiltersSlot] = useState([]);
   const [checkedValues, setCheckedValues] = useState([]);
   const [submit, setSubmit] = useState(false);
-  const[order,setOrder]=useState('')
+ 
 
-  const student = useSelector((state) => state.student._id);
+const [modal,setmodal]=useState(false)
 
-  console.log(order, 4343422);
+  console.log(checkedValues);
+
+ console.log(slot);
 
   
   let { id } = useParams();
@@ -43,22 +45,7 @@ function Reservation() {
 
  
 
-  const createOrder = (order_id) => {
-    axios.post(
-      "/creat_booking",
-      { student, slot:checkedValues, amount,teacher:id,order_id},
-      {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      }
-    ).then((res)=>{
-        if(res.data.status){
-            
-            setOrder(res.data.result)
-        }
-    })
-  };
+
 
   const handleSubmit=()=>{
   if(checkedValues.length!==0){
@@ -206,7 +193,12 @@ function Reservation() {
                     </a>
                   </div>
                 </div>
-
+       <button
+       onClick={()=>setmodal(true)}
+       
+       
+       >modal</button >
+       {modal&&<ModalSuccess  modal={modal} setModal={setmodal}/>}
                 <span className="absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white peer-checked:border-emerald-400"></span>
 
                 <label
@@ -296,50 +288,9 @@ function Reservation() {
               Book Now
             </button>
             <div className="w-80 mt-10">
-            {submit && (
-              <PayPalScriptProvider
-                options={{
-                  "client-id":process.env.REACT_APP_CLIENT_ID
-                   
-                }}
-              >
-                <PayPalButtons
-                  style={{ layout: "vertical" }}
-                  createOrder={(data, actions) => {
-                    return actions.order
-                      .create({
-                        purchase_units: [
-                          {
-                            amount: {
-                              value: amount,
-                            },
-                          },
-                        ],
-                      })
-                      .then((orderId) => {
-                       
-                       
-                        return orderId;
-                      });
-                  }}
-                  onApprove={function (data, actions) {
-                    return actions.order.capture().then(function () {
-
-                        
-                      // Your code here after capture the order
-                    if(data.orderID){
-                        createOrder(data.orderID);
-                        alert("its completed");
-
-                    }
-                    else{
-                        alert("its not completed"); 
-                    }
-                    });
-                  }}
-                />
-              </PayPalScriptProvider>
-             )}
+            {submit && 
+             <Paypal amount={amount} checkedValues={checkedValues}/>
+             }
              </div>
           </div>
         </div>

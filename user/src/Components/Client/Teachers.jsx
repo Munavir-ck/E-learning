@@ -54,7 +54,7 @@ export default function Teachers() {
         className={
           searchError
             ? "w-full flex h-full  justify-center"
-            : "h-full colo  grid gap-6 mt-10  text-center sm:h-full grid-cols-2 m-8 md:grid-cols-4 shadow-lg  cursor-pointer"
+            : "h-full colo p-16 grid gap-6 mt-10  text-center sm:h-full grid-cols-2 m-8 md:grid-cols-4 shadow-lg  cursor-pointer"
         }
       >
         {searchError ? (
@@ -64,10 +64,13 @@ export default function Teachers() {
           ></img>
         ) : (
           (searchResult.length ? searchResult : teachers).map((items, key) => (
-            <Link to={`/teacher_details/${items._id}`}>
+            <Link to={`/teacher_details/${items._id}`}
+            
+            >
               <motion.div
                 whileHover={{ scale: 1.1, color: "#e1eaf0" }}
                 transition={{ type: "spring", stiffness: 120 }}
+                
               >
                 <a href="#" class="group relative block bg-black">
                   <img

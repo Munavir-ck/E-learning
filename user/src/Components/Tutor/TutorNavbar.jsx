@@ -137,6 +137,7 @@ export default function Sidebar() {
                                 </Link>
                             </li>
                             <li className="rounded-sm">
+                            <Link to={"/tutor/booking_list"}>
                                 <a
                                     href="#"
                                     className="flex items-center p-2 space-x-3 rounded-md"
@@ -164,6 +165,7 @@ export default function Sidebar() {
                                         Settings
                                     </span>
                                 </a>
+                                </Link>
                             </li>
                             <li className="rounded-sm">
                                 <a

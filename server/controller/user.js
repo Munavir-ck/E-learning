@@ -416,9 +416,37 @@ const get_slots_user = async (req, res) => {
 
 const creat_booking = async (req, res) => {
   try {
-    const data = req.body;
+    const {student,slot,amount,teacher,order_id} = req.body;
+    console.log("createee", "createee");
+    
+    const slotId =slot;
 
-    await orderDb.create(data).then((data) => {
+    console.log(slotId, "array");
+    const ID = teacher;
+    const result = await teacherDb.findOne(
+      { _id: ID },
+      { slot: 1, _id: 0 }
+    );
+
+    console.log(result, "result");
+
+    const filteredResult = result.slot.filter((obj) => {
+      console.log("obj._id:", obj._id);
+      console.log("slotId:", slotId);
+      return slotId.includes(obj._id.toString());
+    });
+
+    console.log(filteredResult, 6666);
+
+    await orderDb.create({
+      student,
+      slot: filteredResult,
+      amount,
+      teacher,
+      order_id
+    }
+      
+      ).then((data) => {
       console.log(data);
       res.json({ status: true, result: data });
     });
@@ -429,28 +457,29 @@ const creat_booking = async (req, res) => {
 
 const order_success = async (req, res) => {
   try {
-
     console.log(req.body);
-    const { order,id ,slot} = req.body;
-    await orderDb.findOneAndUpdate(
-      { order },
-      {
-        order_status: "success",
+    const { order, id, slot } = req.body;
+    await orderDb
+      .findOneAndUpdate(
+        { order },
+        {
+          order_status: "success",
 
-        payment_status: "success",
-      }
-    ).then((data)=>{
+          payment_status: "success",
+        }
+      )
+      .then((data) => {
+        res.json({ status: true, result: data });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-      res.json({status:true,result:data})
-    }).catch((err)=>{
-      console.log(err);
-    })
-
-    
-    await teacherDb.findOneAndUpdate({_id:id }, 
-    {$pullAll:{slot:[{_id:id}]}}).then((data)=>{
-      console.log(data);
-    })
+    await teacherDb
+      .findOneAndUpdate({ _id: id }, { $pullAll: { slot: [{ _id: id }] } })
+      .then((data) => {
+        console.log(data);
+      });
   } catch (error) {
     console.log(error);
   }

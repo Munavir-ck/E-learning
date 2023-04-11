@@ -5,6 +5,7 @@ import { get_profile
     ,googleAuthTutor,
     create_slot,
     get_slot,
+    get_bookings,
 } from "../controller/tutor.js";
 const router=express.Router()
 
@@ -12,6 +13,7 @@ router.get("/get_profile",get_profile)
 router.post("/edit_profile_image",edit_profile_image)
 router.post("/create_slot", verifyuserJWT,create_slot)
 router.get("/get_slot", verifyuserJWT, get_slot,)
+router.get('/get_bookings',verifyuserJWT,get_bookings)
 
 
 
