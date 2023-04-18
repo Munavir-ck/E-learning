@@ -23,6 +23,10 @@ import { signup,login,
     get_slots_user,
     creat_booking,
     order_success,
+    get_bookings,
+    cancel_booking,
+    create_chat,
+    get_messages,
 } from "../controller/user.js";
 const router=express.Router()
 
@@ -55,5 +59,9 @@ router.post("/filter_slot",verifyuserJWT,filter_slot)
 router.get("/get_slot",verifyuserJWT,get_slots_user)
 router.post("/creat_booking",verifyuserJWT,creat_booking)
 router.post("/order_success",verifyuserJWT,order_success)
+router.get("/get_bookings",verifyuserJWT,get_bookings)
+router.post("/cancel_booking",verifyuserJWT,cancel_booking)
+router.post("/create_chat",verifyuserJWT,create_chat)
+router.get("/get_messages",verifyuserJWT,get_messages)
 
 export default router

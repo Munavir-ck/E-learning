@@ -30,6 +30,7 @@ function TeacherLogin() {
        dispatch(setTutor({
        name:res.data.tutor.name,
        email:res.data.tutor.email,
+       tutor_id:res.data.tutor._id,
        isLoggedIn:true,
       
        }))

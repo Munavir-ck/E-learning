@@ -1,12 +1,97 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "../../axios/axios";
 import { GoVerified } from "react-icons/go";
 import { GiCancel } from "react-icons/gi";
+import { BsFillChatFill } from "react-icons/bs";
+
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
+import { useSocket } from "../../contex/socketProvider";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { setRoom } from "../../Store/Slice/socketSlice";
+import { setStudentId } from "../../Store/Slice/studentIdSlice";
 
 function Booking_list() {
+  const dispatch = useDispatch();
   const [bookings, setBookings] = useState([]);
+  const socket = useSocket();
+  const navigate = useNavigate();
+  const email = useSelector((state) => state.tutor.email);
+
+  const now = new Date();
+
+  const currentTime = new Date(now.getTime());
+  const hours = currentTime.getHours();
+  const minutes = currentTime.getMinutes();
+
+  const time =
+    hours.toString().padStart(2, "0") +
+    ":" +
+    minutes.toString().padStart(2, "0");
+
+
+    const handlechat=(studentId)=>{
+
+
+      socket.emit("room:joinchat",studentId)
+      dispatch(
+        setStudentId({
+          studentId:studentId
+        })
+      )
+    }
+    
+    
+    const handlejoinChatRoom=(data)=>{
+      navigate(`/chat_room_tutor/${data}`)
+       }
+
+
+    
+       useEffect(() => {
+        socket.on("roomAlreadyExists",handlejoinChatRoom);
+        socket.on("user:joined",handlejoinChatRoom)
+    
+        return () => {
+          socket.off("roomAlreadyExists",handlejoinChatRoom);
+          socket.off("user:joined",handlejoinChatRoom)
+        };
+      }, [socket]);
+  
+
+  const handleOnclick = (studentId) => {
+    const room = Math.floor(Math.random() * 100 + 1);
+    console.log(2222);
+    dispatch(
+      setRoom({
+        room: room,
+      })
+    );
+
+    socket.emit("room:join", { email, room });
+    socket.emit("display-notification", { studentId }, studentId);
+  };
+
+  const handlejoinRoom = useCallback(
+    (data) => {
+      const { email, room } = data;
+      navigate(`/room/${room}`);
+    },
+    [navigate]
+  );
+
+  useEffect(() => {
+    socket.on("room:join", handlejoinRoom);
+   
+
+    return () => {
+      socket.off("room:join", handlejoinRoom);
+   
+    };
+  }, [socket]);
 
   useEffect(() => {
     axios
@@ -61,8 +146,12 @@ function Booking_list() {
         }
       });
   };
+  // bookings.map((item) => {
+  //   console.log(item.slot.booking_status, "start time");
+  //   console.log(time > item.slot.startTime && time < item.slot.startTime);
+  // });
 
-  const handleDecline = () => {};
+ 
   return (
     <div className="h-screen overflow-y-auto">
       <div className="bg-white p-8 rounded-md w-full">
@@ -149,7 +238,7 @@ function Booking_list() {
                         </td>
                         <td className="px-5 py-5 bg-white text-sm">
                           <p className="text-gray-900 whitespace-no-wrap">
-                            Admin
+                            {items.slot.endTime}--{items.slot.startTime}
                           </p>
                         </td>
                         <td className="px-5 py-5 bg-white text-sm">
@@ -169,23 +258,41 @@ function Booking_list() {
                           </span>
                         </td>
                         <td className="px-5 py-5 bg-white text-sm flex justify-around">
-                          <button
-                            onClick={handleActions}
-                            data-id={items.slot._id}
-                            data-order_id={items._id}
-                            data-value="accept"
-                          >
-                            <GoVerified size={20}  color="green" />
-                          </button>
+                          {time > items.slot.startTime &&
+                          time < items.slot.endTime &&
+                          items.slot.booking_status !== "Cancelled" ? (
+                            <button
+                              onClick={() =>
+                                handleOnclick(items.student[0]._id)
+                              }
+                              className="bg-green-700"
+                            >
+                              Join
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                onClick={handleActions}
+                                data-id={items.slot._id}
+                                data-order_id={items._id}
+                                data-value="accept"
+                              >
+                                <GoVerified size={20} color="green" />
+                              </button>
 
-                          <button
-                            onClick={handleActions}
-                            data-id={items.slot._id}
-                            data-order_id={items._id}
-                            data-value="decline"
-                          >
-                            <GiCancel size={20} color="red" />
-                          </button>
+                              <button
+                                onClick={handleActions}
+                                data-id={items.slot._id}
+                                data-order_id={items._id}
+                                data-value="decline"
+                              >
+                                <GiCancel size={20} color="red" />
+                              </button>
+                              <button onClick={()=>handlechat(items.student[0]._id)}>
+                                <BsFillChatFill size={20} color="blue" />
+                              </button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     );
@@ -209,6 +316,7 @@ function Booking_list() {
                             </button>
 						</div>
 					</div> */}
+              <button onClick={handleOnclick}>Click</button>
             </div>
           </div>
         </div>

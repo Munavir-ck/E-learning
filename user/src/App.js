@@ -22,6 +22,9 @@ import ReservationPage from './pages/Client/ReservationPage';
 import Time_managePage from './pages/Tutor/Time_managePage';
 import BookingList_page from './pages/Tutor/BookingList_page';
 import List_booking_page from './pages/Client/List_booking_page';
+import RoomPage from './Components/screen/Room';
+import ChatPage from './pages/Client/ChatPage';
+import ChatRoomTutorPage from './pages/Tutor/ChatRoomPage';
 
 
 
@@ -45,7 +48,8 @@ function App() {
       <Route path='/teacher_details/:id' element={<TeacherDetailPage/>}/>
       <Route path='/reservation/:id' element={<ReservationPage/>}/>
       <Route path='/list_booking' element={<List_booking_page />}/>
-      
+      <Route path='/room/:roomId' element={<RoomPage/>}/>
+      <Route path='/chat_room/:id' element={<ChatPage/>}/>
 
 
       <Route path='/admin' element={<AdminHome/>}/>
@@ -64,6 +68,7 @@ function App() {
       <Route path='/tutor/profile' element={<TutorProfilePage/>}/>
       <Route path='/tutor/manage_time' element={<Time_managePage />}/>
       <Route path='/tutor/booking_list' element={<BookingList_page/>}/>
+      <Route path='/chat_room_tutor/:id' element={<ChatRoomTutorPage/>}/>
      
       
     </Routes>

@@ -9,17 +9,14 @@ import teacherDb from "../model/teacher.js";
 import subjectDb from "../model/subject.js";
 import { cloudinary } from "../utilities/cloudinary.js";
 import orderDb from "../model/order.js";
+import messageDb  from "../model/chat.js";
 
 const signup = async (req, res) => {
   try {
-    console.log(1111111111);
-    console.log(req.body);
-    const { name, password, email, phone, Class } = req.body;
+    const { name, password, email, phone, Class, address, city } = req.body;
     const user = await userDb.findOne({ email: email });
 
     if (user) {
-      console.log(user);
-      console.log(3333333);
       res.json({ status: false, message: "email already exist" });
     } else {
       const salt = await bcrypt.genSalt(10);
@@ -31,10 +28,11 @@ const signup = async (req, res) => {
           email,
           phone,
           Class,
+          address,
+          city,
           password: hashPassword,
         })
         .then((data) => {
-          console.log(data);
           res.json({ status: true, message: "email already exist" });
         })
         .catch((err) => {
@@ -48,18 +46,14 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    console.log(4444444444);
-    console.log(req.body);
     const { email, password } = req.body.formValues;
-    console.log(email);
+
     const user = await userDb.findOne({ email: email });
     const check = await userDb.find({});
-    console.log(check);
+
     if (user) {
-      console.log(77777777777777);
       const isMatch = await bcrypt.compare(password, user.password);
       if (user.email === email && isMatch) {
-        console.log(6666666666666);
         const ID = user._id;
         const token = jwt.sign({ ID }, process.env.JWT_SECRET_KEY, {
           expiresIn: 3000,
@@ -83,7 +77,6 @@ const login = async (req, res) => {
 
 const get_classes = async (req, res) => {
   try {
-    console.log(1111111111);
     const classes = await classDb.find({});
     res.json({ classes });
   } catch (error) {
@@ -93,9 +86,6 @@ const get_classes = async (req, res) => {
 
 const googleAthentication = async (req, res) => {
   try {
-    console.log(111111111111111111);
-    console.log(req.profile, 111111111);
-
     const userId = userData._id;
 
     const token = jwt.sign({ userId }, process.env.JWT_SECRET_KEY, {
@@ -113,8 +103,7 @@ const googleAthentication = async (req, res) => {
 };
 
 const get_otp = (req, res) => {
-  console.log(req.body.number);
-
+  console.log(22222);
   sendotp(req.body.number);
 };
 const verify_otp = (req, res) => {
@@ -141,7 +130,6 @@ const get_teachers = async (req, res) => {
     await teacherDb
       .find({})
       .then((data) => {
-        console.log(data);
         res.json({ status: true, data });
       })
       .catch((err) => {
@@ -155,26 +143,22 @@ const get_teachers = async (req, res) => {
 
 const search_class = async (req, res) => {
   try {
-    console.log(req.body.searchData);
     const result = [];
     const data = req.body.searchData;
 
-    console.log(data, 88);
     const regex = new RegExp("^" + data + ".*", "i");
     const search = await classDb.aggregate([
       {
-        $match: { $or: [{ title: regex }, { class: regex }] },
+        $match: { $or: [{ subject: regex }, { class: regex }] },
       },
     ]);
-    console.log(search, 444444);
+
     for (let i = 0; i < search.length; i++) {
       result.push(search[i]);
     }
     if (result.length === 0) {
       res.json({ status: false, message: "No results" });
     } else {
-      console.log(result, 11);
-
       res.json({ status: true, result });
     }
   } catch (error) {
@@ -185,26 +169,22 @@ const search_class = async (req, res) => {
 const search_teacher = async (req, res) => {
   console.log(req.body);
   try {
-    console.log(req.body.searchData);
     const result = [];
     const data = req.body.searchData;
 
-    console.log(data, 88);
     const regex = new RegExp("^" + data + ".*", "i");
     const search = await teacherDb.aggregate([
       {
         $match: { $or: [{ name: regex }, { subject: regex }] },
       },
     ]);
-    console.log(search, 444444);
+
     for (let i = 0; i < search.length; i++) {
       result.push(search[i]);
     }
     if (result.length === 0) {
       res.json({ status: false, message: "No results" });
     } else {
-      console.log(result, 11);
-
       res.json({ status: true, result });
     }
   } catch (error) {
@@ -306,12 +286,10 @@ const get_profile = async (req, res) => {
 
 const edit_profile_image = async (req, res) => {
   try {
-    console.log(222222222222);
-
     const profile = "my-profile-folder";
     const { imgBase } = req.body;
     const userID = req.userId;
-    console.log(userID, 3333333333);
+
     const result = await cloudinary.uploader
       .upload(imgBase, {
         folder: profile,
@@ -334,16 +312,11 @@ const edit_profile_image = async (req, res) => {
 };
 
 const get_teacherDetais = async (req, res) => {
-  console.log(3333333);
-  console.log(req.query);
-
   const teacherID = req.query.id;
 
   await teacherDb
     .findOne({ _id: teacherID })
     .then((data) => {
-      console.log(data);
-
       res.json({ status: true, result: data });
     })
     .catch((err) => {
@@ -376,7 +349,6 @@ const filter_slot = async (req, res) => {
       const utcDate = new Date(
         Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
       );
-      console.log(teacherID, 11);
 
       await teacherDb
         .findOne(
@@ -384,7 +356,11 @@ const filter_slot = async (req, res) => {
           { "slot.$": 1, _id: 0 }
         )
         .then((data) => {
-          res.json({ status: true, result: data });
+          if (data === null) {
+            res.json({ status: false });
+          } else {
+            res.json({ status: true, result: data });
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -416,40 +392,27 @@ const get_slots_user = async (req, res) => {
 
 const creat_booking = async (req, res) => {
   try {
-    const {student,slot,amount,teacher,order_id} = req.body;
-    console.log("createee", "createee");
-    
-    const slotId =slot;
+    const { student, slot, amount, teacher, order_id } = req.body;
 
-    console.log(slotId, "array");
+    const slotId = slot;
+
     const ID = teacher;
-    const result = await teacherDb.findOne(
-      { _id: ID },
-      { slot: 1, _id: 0 }
-    );
-
-    console.log(result, "result");
+    const result = await teacherDb.findOne({ _id: ID }, { slot: 1, _id: 0 });
 
     const filteredResult = result.slot.filter((obj) => {
-      console.log("obj._id:", obj._id);
-      console.log("slotId:", slotId);
       return slotId.includes(obj._id.toString());
     });
-
-    console.log(filteredResult, 6666);
-
-    await orderDb.create({
-      student,
-      slot: filteredResult,
-      amount,
-      teacher,
-      order_id
-    }
-      
-      ).then((data) => {
-      console.log(data);
-      res.json({ status: true, result: data });
-    });
+    await orderDb
+      .create({
+        student,
+        slot: filteredResult,
+        amount,
+        teacher,
+        order_id,
+      })
+      .then((data) => {
+        res.json({ status: true, result: data });
+      });
   } catch (error) {
     console.log(error);
   }
@@ -457,7 +420,6 @@ const creat_booking = async (req, res) => {
 
 const order_success = async (req, res) => {
   try {
-    console.log(req.body);
     const { order, id, slot } = req.body;
     await orderDb
       .findOneAndUpdate(
@@ -477,13 +439,115 @@ const order_success = async (req, res) => {
 
     await teacherDb
       .findOneAndUpdate({ _id: id }, { $pullAll: { slot: [{ _id: id }] } })
+      .then((data) => {});
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const get_bookings = async (req, res) => {
+  try {
+    const ID = req.userId;
+    const teacherId = new mongoose.Types.ObjectId(ID);
+
+    const data = await orderDb.aggregate([
+      {
+        $match: { student: teacherId },
+      },
+      {
+        $lookup: {
+          from: "teachers",
+          localField: "teacher",
+          foreignField: "_id",
+          as: "teacher",
+        },
+      },
+      {
+        $unwind: "$slot",
+      },
+    ]);
+
+    res.json({ status: true, result: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const cancel_booking = async (req, res) => {
+  try {
+    const { slot_id, order_id } = req.body;
+    const slotid = new mongoose.Types.ObjectId(slot_id);
+    const result = await orderDb.updateOne(
+      { _id: order_id, "slot._id": slotid },
+      { $set: { "slot.$.booking_status": "Cancelled" } }
+    );
+    res.json({ status: true, result: result });
+  } catch (error) {
+    console.log(error);
+  }
+};
+const create_chat = async (req, res) => {
+  const { message, teacher } = req.body;
+  console.log(req.userId);
+
+  try {
+    await  messageDb.create({
+      sender: req.userId,
+      receiver: teacher,
+      message: message,
+    })
       .then((data) => {
         console.log(data);
+        res.json({result:data})
+      })
+      .catch((err) => {
+        console.log(err);
       });
   } catch (error) {
     console.log(error);
   }
 };
+
+const get_messages=async(req,res)=>{
+  console.log(req.query,222)
+
+  const{teacher}=req.query
+  const userId=req.userId
+
+  console.log(teacher,userId);
+  try {
+  const messagesSend=  await  messageDb.find({
+      sender:userId,
+      receiver:teacher,
+
+    }).sort({createdAt:-1})
+const messageRecieved=await messageDb.find({
+  sender:teacher,
+  receiver:userId,
+
+})
+
+ const result=messageRecieved.concat(messagesSend)
+
+  
+    result.sort(function(a,b){
+      return a. createdAt - b. createdAt;
+    })
+
+    
+  res.json({result: result})
+
+ 
+   
+
+  } catch (error) {
+    console.log(error);
+  }
+
+
+
+
+}
 
 export {
   signup,
@@ -505,4 +569,8 @@ export {
   get_slots_user,
   creat_booking,
   order_success,
+  get_bookings,
+  cancel_booking,
+  create_chat,
+  get_messages,
 };

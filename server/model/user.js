@@ -32,6 +32,12 @@ const userSchema = new mongoose.Schema(
     Class:{
       type: String,
     },
+    address:{
+      type:String,
+    },
+    city:{
+      type:String
+    },
     isBanned: { type: Boolean, default: false },
   },
   {

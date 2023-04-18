@@ -2,6 +2,8 @@ import { cloudinary } from "../utilities/cloudinary.js";
 import teacherDb from "../model/teacher.js";
 import jwt from "jsonwebtoken";
 import orderDb from "../model/order.js";
+import mongoose from "mongoose";
+import  messageDb from "../model/chat.js";
 
 const googleAuthTutor = async (req, res) => {
   try {
@@ -107,55 +109,126 @@ const get_bookings = async (req, res) => {
 
   const ID = req.userId;
 
+  const objectId = new mongoose.Types.ObjectId(ID);
+
   try {
-  
+    // const data = await orderDb
+    // .find({ teacher: ID })
+    // .populate("student", "name phone")
+    // .unwind("slot");
 
-    const result = await orderDb
-      .find({ teacher: ID })
-      .populate("student", "name phone");
+    const data = await orderDb.aggregate([
+      {
+        $match: { teacher: objectId },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "student",
+          foreignField: "_id",
+          as: "student",
+        },
+      },
+      {
+        $unwind: "$slot",
+      },
+    ]);
 
-  
-
-    let slots = [];
-    result.forEach(async (element) => {
-      const slotId = element.slot;
-     const data= await teacherDb
-        .findOne(
-          { _id: ID, "slot._id": { $in: slotId } },
-          { "slot.$": 1, _id: 0 }
-        )
-       
-          console.log(data, 2222);
-          if (data!= null) {
-            slots.push(data);
-          }
-          console.log(slots,999);
-
-        
-          let slots = [];
-await Promise.all(result.map(async (element) => {
-  const slotId = element.slot;
-  const data = await teacherDb.findOne(
-    { _id: ID, "slot._id": { $in: slotId } },
-    { "slot.$": 1, _id: 0 }
-  );
-  if (data != null) {
-    slots.push(data);
-  }
-}));
-console.log(slots, 222);
-
-       
-       
-       
-    });
-    console.log(slots,222);
-    console.log(34343434343434);
-    res.json({ status: true, result: result, slots: slots });
+    res.json({ status: true, result: data });
+    console.log(data);
   } catch (error) {
     console.log(error);
   }
 };
+
+const booking_actions = async (req, res) => {
+  console.log(req.body);
+  const { value, order_id, slot_id } = req.body;
+  const slotid = new mongoose.Types.ObjectId(slot_id)
+  
+  if (value === "accept") {
+    console.log(2323232323);
+
+ 
+    try {
+        const result = await orderDb.updateOne(
+            { _id: order_id, "slot._id": slotid  },
+            { $set: { "slot.$.booking_status": "success" } },
+            )
+       
+            res.json({ status: true });
+    } catch (error) {
+        console.log(error);
+    }
+   
+  
+  } else if (value === "decline") {
+   
+    const result = await orderDb.updateOne(
+        { _id: order_id, "slot._id": slotid  },
+        { $set: { "slot.$.booking_status": "failed" } },
+        )
+   
+        res.json({ status: true });
+  }
+};
+
+
+const create_chat = async (req, res) => {
+  const { message, student} = req.body;
+  
+
+
+  try {
+    await  messageDb.create({
+      sender: req.userId,
+      receiver:student,
+      message: message,
+    })
+      .then((data) => {
+        console.log(data);
+        res.json({result:data})
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const get_messages=async(req,res)=>{
+  console.log(req.query,222)
+
+  const{student}=req.query
+  const teacher=req.userId
+
+
+  try {
+   const messageSend= await  messageDb.find({
+      sender:teacher,
+      receiver:student
+    })
+
+    const messageRecieved=await messageDb.find({
+      sender:student,
+      receiver:teacher,
+    })
+
+    const result=messageRecieved.concat(messageSend)
+
+  
+    result.sort(function(a,b){
+      return a. createdAt - b. createdAt;
+    })
+
+    
+    res.json({result: result})
+
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export {
   edit_profile_image,
@@ -164,4 +237,7 @@ export {
   create_slot,
   get_slot,
   get_bookings,
+  booking_actions,
+  create_chat,
+  get_messages,
 };

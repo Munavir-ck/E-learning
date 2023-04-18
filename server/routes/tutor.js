@@ -6,6 +6,9 @@ import { get_profile
     create_slot,
     get_slot,
     get_bookings,
+    booking_actions,
+    create_chat,
+    get_messages,
 } from "../controller/tutor.js";
 const router=express.Router()
 
@@ -14,6 +17,9 @@ router.post("/edit_profile_image",edit_profile_image)
 router.post("/create_slot", verifyuserJWT,create_slot)
 router.get("/get_slot", verifyuserJWT, get_slot,)
 router.get('/get_bookings',verifyuserJWT,get_bookings)
+router.post("/booking_actions",verifyuserJWT,booking_actions)
+router.post( "/create_chat",verifyuserJWT,create_chat)
+router.get("/get_messages", verifyuserJWT,get_messages)
 
 
 

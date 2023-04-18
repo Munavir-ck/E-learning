@@ -4,20 +4,17 @@ const orderSchema = new mongoose.Schema(
   {
 
    student: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
       ref: "user"
      
     },
 
     teacher: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'teacher'
     },
    
-    order_status: {
-      type:String,
-      default:'pending'
-    },
+  
     amount: {
       type: Number,
     },

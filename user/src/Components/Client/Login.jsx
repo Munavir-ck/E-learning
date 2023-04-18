@@ -6,11 +6,13 @@ import GoogleButton from "react-google-button";
 import { setStudent } from "../../Store/Slice/student_slice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import { useSocket } from "../../contex/socketProvider";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
+  const socket = useSocket();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const initialValues = { email: "", password: "" };
@@ -70,6 +72,8 @@ function Login() {
                 isLoggedIn: true,
               })
             );
+            const student_id=res.data.result._id
+            socket.emit('student:initial-connection',{student_id},student_id) 
             //  console.log(someValue);
             navigate("/");
           } else {

@@ -12,20 +12,19 @@ export default function Classes() {
 
   useEffect(() => {
     async function fetchData() {
-      console.log("Fetching data...");
+      
       const response = await axios.get("/get_classes").then((res) => {
-        console.log("Data:", res.data);
+       
         setClasses(res.data.classes);
       });
     }
 
     fetchData();
   }, []);
-  console.log(classes);
+ 
 
   const handleClick = (url) => {
-    console.log(url);
-    console.log(4444444444);
+    
     setVideoUrl(url);
   };
 
@@ -116,9 +115,9 @@ export default function Classes() {
               />
               <div className="p-4">
                 <h4 className="text-xl font-semibold text-blue-600">
-                  {items.title}
+                  {items.subject}
                 </h4>
-                <p className="mb-2 leading-normal">kkkkkkkkkkkkk</p>
+                <p className="mb-2 leading-normal"> {items.description}</p>
               </div>
             </motion.div>
           ))

@@ -3,7 +3,7 @@ import jwt from  "jsonwebtoken"
 const adminAuth=async(req,res,next)=>{
 
     console.log(process.env.JWT_SECRET_KEY);
- console.log(999999999);
+ 
     const token=req.headers['admintoken']
     if(!token){
         res.send({ status:false, "message": "You need token" })

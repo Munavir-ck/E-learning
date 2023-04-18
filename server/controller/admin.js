@@ -111,7 +111,7 @@ const upload_class=async(req,res)=>{
          videoDb.create({
          description:req.body.description,
           class:req.body.class,
-         title:req.body.title,
+        subject:req.body.subject,
          video_path:`http://localhost:${process.env.PORT}${videoPath}`,
          thumbnail_path:`http://localhost:${process.env.PORT}${path}`,
         

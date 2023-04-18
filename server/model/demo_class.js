@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const VideoSchema = new mongoose.Schema(
   {
-      title: {
+     subject: {
       type: String,
       required: true,
     

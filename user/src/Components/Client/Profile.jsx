@@ -1,178 +1,230 @@
-import React, { useEffect, useState } from 'react'
-import axios from '../../axios/axios'
-import {ToastContainer,toast} from "react-toastify"
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useEffect, useState } from "react";
+import axios from "../../axios/axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { useDispatch } from "react-redux";
 import { setStudent } from "../../Store/Slice/student_slice";
-
-
-
-
+import "./profile.css";
 
 function Profile() {
-    const dispatch=useDispatch()
-const[student,setStudents]=useState({})
-const [image,setImage]=useState(null)
-const[newImage,setNewimage]=useState(null)
+  const dispatch = useDispatch();
+  const [student, setStudents] = useState({});
+  const [image, setImage] = useState(null);
+  const [newImage, setNewimage] = useState(null);
 
+  const toBase64 = (image) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    }).catch((err) => {
+      console.log(err);
+    });
 
-const toBase64=image=>new Promise((resolve,reject)=>{
-    const reader = new FileReader();
-    reader.readAsDataURL(image);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  }).catch((err)=>{
-    console.log(err);
-  })
-
-  const handleImage=async(e)=>{
-    setImage(e.target.files[0])
-  
-  }
-  useEffect(()=>{
+  const handleImage = async (e) => {
+    setImage(e.target.files[0]);
+  };
+  useEffect(() => {
     async function editProfile() {
-     
-     
-     if (image) {
-      
-         const imgBase = await toBase64(image)
-         console.log(imgBase,333333);
-         setImage()
-         axios.post("/edit_profile_image",{
-            imgBase
-         },{ headers: {
-            Authorization: localStorage.getItem('token')
-          }
-         
-        }).then((res)=>{
-         toast.success("success")
-         console.log(res.data.data.image,2222);
-         setNewimage(res.data.data.image)
-         dispatch(
-            setStudent({
-                image:res.data.data.image,
-                name:student.name,
-                email:student.email,
-                isLoggedIn:true,
-                _id:student._id
-            })
-           )
-           console.log(res.data.data.image,3333);
-         }).catch((res)=>{
-          console.log("error");
-          toast.error("error") 
-         })
-     }
-  
+      if (image) {
+        const imgBase = await toBase64(image);
+        console.log(imgBase, 333333);
+        setImage();
+        axios
+          .post(
+            "/edit_profile_image",
+            {
+              imgBase,
+            },
+            {
+              headers: {
+                Authorization: localStorage.getItem("token"),
+              },
+            }
+          )
+          .then((res) => {
+            toast.success("success");
+            console.log(res.data.data.image, 2222);
+            setNewimage(res.data.data.image);
+            dispatch(
+              setStudent({
+                image: res.data.data.image,
+                name: student.name,
+                email: student.email,
+                isLoggedIn: true,
+                _id: student._id,
+              })
+            );
+            console.log(res.data.data.image, 3333);
+          })
+          .catch((res) => {
+            console.log("error");
+            toast.error("error");
+          });
+      }
     }
-  
-  editProfile()
-  
-    },[image])
 
-    useEffect(()=>{
-        axios.get("/get_profile", { headers: {
-            Authorization: localStorage.getItem('token')
-          }
-         
-        }).then((res)=>{
-         if (res.data.status) {
-            setStudents(res.data.result)
-         }
-            console.log(222222);
-        })
-        
-        },[newImage])
+    editProfile();
+  }, [image]);
 
+  useEffect(() => {
+    axios
+      .get("/get_profile", {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        if (res.data.status) {
+          setStudents(res.data.result);
+        }
+        console.log(222222);
+      });
+  }, [newImage]);
 
-        console.log(student);
+  console.log(student);
   return (
     <div>
-    
-    <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css"/>
-<link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"/>
-
-<main className="profile-page bg-blueGray-200">
-  <section className="relative block h-500-px">
-  <ToastContainer/>
-    <div className="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-70-px"  style={{ transform: "translateZ(0px)" }}>
-      <svg className="absolute bottom-0 overflow-hidden" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 100" x="0" y="0">
-        <polygon className="text-blueGray-200 fill-current" points="2560 0 2560 100 0 100"></polygon>
-      </svg>
-    </div>
-  </section>
-  <section className="relative py-16 bg-blueGray-200">
-    <div className="container mx-auto px-4">
-      <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
-        <div className="px-6">
-          <div className="flex flex-wrap justify-center">
-            <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
-              <div className="relative">
-                <img alt="..."  src={student.image ? student.image : "../../../userprofile.jpg"} className="shadow-xl  object-contain rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"/>
-              </div>
+      <div class="bg-gray-100">
+        <div class="w-full text-white bg-main-color">
+          <div
+            x-data="{ open: false }"
+            class="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8"
+          >
+            <div class="p-4 flex flex-row items-center justify-between">
+              <a
+                href="#"
+                class="text-lg font-semibold tracking-widest uppercase rounded-lg focus:outline-none focus:shadow-outline"
+              >
+                example profile
+              </a>
             </div>
-            <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
-              <div className="py-6 px-3 mt-32 sm:mt-0">
-                <button className="bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
-                 Edit Image
-                  <label class="block">
-    <span class="sr-only">Choose File</span>
-    <input type="file"
-     onChange={handleImage}
-      class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-  </label>
-                </button>
-
-              </div>
-            </div>
-            <div className="w-full lg:w-4/12 px-4 lg:order-1">
-              
-            </div>
+            <nav class="flex-col flex-grow pb-4 md:pb-0 hidden md:flex md:justify-end md:flex-row">
+              <div class="relative" x-data="{ open: false }"></div>
+            </nav>
           </div>
-          <div className="text-center mt-12">
-            <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-             {student.name}
-            </h3>
-            <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-              <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-              {student.email}
-            </div>
-            <div className="mb-2 text-blueGray-600 mt-10">
-              <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i> {student.phone}
-            </div>
-            <div className="mb-2 text-blueGray-600">
-              <i className="fas fa-university mr-2 text-lg text-blueGray-400"></i>Class :{student.Class}
-            </div>
-          </div>
-          <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
-            <div className="flex flex-wrap justify-center">
-              <div className="w-full lg:w-9/12 px-4">
+        </div>
+
+        <div class="container mx-auto my-5 p-5">
+          <div class="md:flex no-wrap md:-mx-2 ">
+            <div class="w-full md:w-3/12 md:mx-2">
+              <div class="bg-white p-3 border-t-4 border-green-400">
+             
+                <div class="image overflow-hidden">
+                  <img
+                    class="h-auto w-full mx-auto"
+                    src={student.image ? student.image : "../../../userprofile.jpg"} 
+                    alt=""
+                  />
+                </div>
+                <h1 class="text-gray-900 font-bold text-xl leading-8 my-1">
+                 {student.name}
+                </h1>
                
-                <button className="bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
-                    Edit Profile
-                    </button>
+                <ul class="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+                  <li class="flex items-center py-3">
+                    <span>Status</span>
+                    <span class="ml-auto">
+                      <span class="bg-green-500 py-1 px-2 rounded text-white text-sm">
+                        Active
+                      </span>
+                    </span>
+                  </li>
+                  <li class="flex items-center py-3">
+                    <span>Member since</span>
+                    <span class="ml-auto">Nov 07, 2016</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="my-4"></div>
+
+              <div class="bg-white p-3 hover:shadow">
+                
+                
+              </div>
+            </div>
+
+            <div class="w-full md:w-9/12 mx-2 h-64">
+              <div class="bg-white p-3 shadow-sm rounded-sm">
+                <div class="flex items-center space-x-2 font-semibold text-gray-900 leading-8">
+                  <span clas="text-green-500">
+                    <svg
+                      class="h-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  </span>
+                  <span class="tracking-wide">About</span>
+                </div>
+                <div class="text-gray-700">
+                  <div class="grid md:grid-cols-2 text-sm">
+                    <div class="grid grid-cols-2">
+                      <div class="px-4 py-2 font-semibold">First Name</div>
+                      <div class="px-4 py-2"> {student.name}</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2">
+                      <div class="px-4 py-2 font-semibold">Gender</div>
+                      <div class="px-4 py-2">Female</div>
+                    </div>
+                    <div class="grid grid-cols-2">
+                      <div class="px-4 py-2 font-semibold">Contact No.</div>
+                      <div class="px-4 py-2"> {student.phone}</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2">
+                      <div class="px-4 py-2 font-semibold">
+                        Permanant Address
+                      </div>
+                      <div class="px-4 py-2">
+                       {student.address},{student.city}
+                      </div>
+                    </div>
+                    <div class="grid grid-cols-2">
+                      <div class="px-4 py-2 font-semibold">Email.</div>
+                      <div class="px-4 py-2">
+                        <a class="text-blue-800" href="mailto:jane@example.com">
+                         {student.email}
+                        </a>
+                      </div>
+                    </div>
+                    <div class="grid grid-cols-2">
+                      <div class="px-4 py-2 font-semibold">Class</div>
+                      <div class="px-4 py-2">{student.class}</div>
+                    </div>
+                  </div>
+                </div>
+                <button class="block w-full text-blue-800 text-sm font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4">
+                  Show Full Information
+                </button>
+              </div>
+
+              <div class="my-4"></div>
+
+              <div class="bg-white p-3 shadow-sm rounded-sm">
+                <div class="grid grid-cols-2">
+                
+                  
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <footer className="relative bg-blueGray-200 pt-8 pb-6 mt-8">
-  <div className="container mx-auto px-4">
-    <div className="flex flex-wrap items-center md:justify-between justify-center">
-      <div className="w-full md:w-6/12 px-4 mx-auto text-center">
-        <div className="text-sm text-blueGray-500 font-semibold py-1">
-          Made with <a href="https://www.creative-tim.com/product/notus-js" className="text-blueGray-500 hover:text-gray-800" target="_blank">Notus JS</a> by <a href="https://www.creative-tim.com" className="text-blueGray-500 hover:text-blueGray-800" target="_blank"> Creative Tim</a>.
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
-  </section>
-</main>
-    </div>
-  )
+  );
 }
 
-export default Profile
+export default Profile;

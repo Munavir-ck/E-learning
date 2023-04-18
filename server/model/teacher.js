@@ -45,6 +45,10 @@ const teacherSchema = new mongoose.Schema(
         endTime: { type: String },
 
         startTime: { type: String },
+        booking_status: {
+          type: String,
+          default: "pending",
+        },
       },
     ],
   },
