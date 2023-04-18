@@ -21,6 +21,7 @@ import TutorHome from './pages/Tutor/TutorHome';
 import ReservationPage from './pages/Client/ReservationPage';
 import Time_managePage from './pages/Tutor/Time_managePage';
 import BookingList_page from './pages/Tutor/BookingList_page';
+import List_booking_page from './pages/Client/List_booking_page';
 
 
 
@@ -43,6 +44,7 @@ function App() {
       <Route path='/profile' element={< Profile_page/>}/>
       <Route path='/teacher_details/:id' element={<TeacherDetailPage/>}/>
       <Route path='/reservation/:id' element={<ReservationPage/>}/>
+      <Route path='/list_booking' element={<List_booking_page />}/>
       
 
 
@@ -62,6 +64,7 @@ function App() {
       <Route path='/tutor/profile' element={<TutorProfilePage/>}/>
       <Route path='/tutor/manage_time' element={<Time_managePage />}/>
       <Route path='/tutor/booking_list' element={<BookingList_page/>}/>
+     
       
     </Routes>
    </BrowserRouter>

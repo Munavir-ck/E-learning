@@ -26,7 +26,7 @@ const [modal,setmodal]=useState(false)
 
   console.log(checkedValues);
 
- console.log(slot);
+ console.log(filterdSlot,444);
 
   
   let { id } = useParams();
@@ -139,11 +139,12 @@ const [modal,setmodal]=useState(false)
       )
       .then((res) => {
         if (res.data.status) {
-          if (res.data.status.result == null) {
-            setFiltersSlot([]);
-          }
+         
           console.log(res.data.result.slot, 55);
           setFiltersSlot(res.data.result.slot);
+        }
+        else{
+            setFiltersSlot(["null"]); 
         }
       })
       .catch((err) => {});

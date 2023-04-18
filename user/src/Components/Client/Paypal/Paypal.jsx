@@ -34,8 +34,10 @@ function Paypal({amount,checkedValues}) {
   return (
     <div>
 
-      
-       <PayPalScriptProvider
+{modal?<ModalSuccess  modal={modal} setModal={setmodal}/>:
+
+
+      <PayPalScriptProvider
                 options={{
                   "client-id":process.env.REACT_APP_CLIENT_ID
                    
@@ -68,7 +70,7 @@ function Paypal({amount,checkedValues}) {
                     if(data.orderID){
                         createOrder(data.orderID);
                         setmodal(true)
-                        {modal&&<ModalSuccess  modal={modal} setModal={setmodal}/>}
+                       
                         alert("its completed");
                       
 
@@ -78,7 +80,7 @@ function Paypal({amount,checkedValues}) {
                     });
                   }}
                 />
-              </PayPalScriptProvider>
+              </PayPalScriptProvider>}
     </div>
   )
 }

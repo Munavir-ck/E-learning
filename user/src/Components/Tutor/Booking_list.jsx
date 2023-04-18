@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../axios/axios";
+import { GoVerified } from "react-icons/go";
+import { GiCancel } from "react-icons/gi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Booking_list() {
   const [bookings, setBookings] = useState([]);
@@ -17,9 +21,52 @@ function Booking_list() {
       });
   }, []);
 
+  const handleActions = (e) => {
+    const order_id = e.currentTarget.dataset.order_id;
+
+    const value = e.currentTarget.dataset.value;
+
+    const slot_id = e.currentTarget.dataset.id;
+
+    console.log(order_id, value, slot_id);
+
+    axios
+      .post(
+        "/tutor/booking_actions",
+        { value, order_id, slot_id },
+        {
+          headers: {
+            Authorization: localStorage.getItem("tutortoken"),
+          },
+        }
+      )
+      .then((res) => {
+        if (res.data.status) {
+          toast.success("Suuccefully Updated");
+
+          let newObj = [];
+          bookings.forEach((item) => {
+            console.log(item);
+            if (item._id === order_id) {
+              if (item.slot._id === slot_id) {
+                item.slot.booking_status =
+                  item.slot.booking_status === "success" ? "failed" : "success";
+              }
+            }
+            newObj.push(item);
+          });
+          console.log(newObj);
+
+          setBookings(newObj);
+        }
+      });
+  };
+
+  const handleDecline = () => {};
   return (
     <div className="h-screen overflow-y-auto">
       <div className="bg-white p-8 rounded-md w-full">
+        <ToastContainer />
         <div className=" flex items-center justify-between pb-6">
           <div>
             <h2 className="text-gray-600 font-semibold">Products Oder</h2>
@@ -75,8 +122,8 @@ function Booking_list() {
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Booking Status
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Status
+                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Action
                     </th>
                   </tr>
                 </thead>
@@ -95,35 +142,19 @@ function Booking_list() {
                             </div>
                             <div className="ml-3">
                               <p className="text-gray-900 whitespace-no-wrap">
-                                {items.student.name}
+                                {items.student[0].name}
                               </p>
                             </div>
                           </div>
                         </td>
                         <td className="px-5 py-5 bg-white text-sm">
                           <p className="text-gray-900 whitespace-no-wrap">
-                            <select
-                              className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                              id="grid-state"
-                              name="subject"
-                              value={4}
-                            >
-                             {items.slot.map(()=>
-                              <option>{}</option>
-                             )}   
-                              
-                             
-                            </select>
+                            Admin
                           </p>
                         </td>
                         <td className="px-5 py-5 bg-white text-sm">
                           <p className="text-gray-900 whitespace-no-wrap">
-                            Jan 18, 2020
-                          </p>
-                        </td>
-                        <td className="px-5 py-5 bg-white text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap">
-                            {items.order_status}
+                            {items.slot.date}
                           </p>
                         </td>
                         <td className="px-5 py-5 bg-white text-sm">
@@ -133,10 +164,28 @@ function Booking_list() {
                               className="absolute inset-0 bg-red-200 opacity-50 rounded-full"
                             ></span>
                             <span className="relative">
-                              {" "}
-                              {items.order_status}
+                              {items.slot.booking_status}
                             </span>
                           </span>
+                        </td>
+                        <td className="px-5 py-5 bg-white text-sm flex justify-around">
+                          <button
+                            onClick={handleActions}
+                            data-id={items.slot._id}
+                            data-order_id={items._id}
+                            data-value="accept"
+                          >
+                            <GoVerified size={20}  color="green" />
+                          </button>
+
+                          <button
+                            onClick={handleActions}
+                            data-id={items.slot._id}
+                            data-order_id={items._id}
+                            data-value="decline"
+                          >
+                            <GiCancel size={20} color="red" />
+                          </button>
                         </td>
                       </tr>
                     );
