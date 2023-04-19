@@ -62,7 +62,7 @@ function TeacherDetail() {
                 <div className="gap-2">
                   <span className="font-bold decoration-green-300">FEE :</span>
                   <span class="title-font font-medium text-2xl text-gray-900">
-                    $58.00
+                   {teacher.FEE}
                   </span>
                 </div>
                 <Link to={`/reservation/${id}`}>

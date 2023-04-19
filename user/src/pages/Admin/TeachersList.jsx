@@ -6,7 +6,7 @@ import React from 'react'
 
 function TeachersList() {
   return (
-  <Fragment>
+  <div className="overflow-y-hidden">
     <div className="flex ">
    <Sidebar/>
    <div className=" w-full ">
@@ -15,7 +15,7 @@ function TeachersList() {
    </div>
  </div>
 
-  </Fragment>
+  </div>
   )
 }
 

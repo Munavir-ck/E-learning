@@ -9,7 +9,10 @@ import teacherDb from "../model/teacher.js";
 import subjectDb from "../model/subject.js";
 import { cloudinary } from "../utilities/cloudinary.js";
 import orderDb from "../model/order.js";
-import messageDb  from "../model/chat.js";
+import messageDb from "../model/chat.js";
+import reviewDb from "../model/review.js";
+import Transaction from "../model/transaction.js";
+import Wallet from "../model/wallet.js";
 
 const signup = async (req, res) => {
   try {
@@ -410,7 +413,24 @@ const creat_booking = async (req, res) => {
         teacher,
         order_id,
       })
-      .then((data) => {
+      .then(async (data) => {
+        await Transaction.create({
+          description: "Booking payment",
+          amount: amount,
+          from: student,
+          to: "Admin",
+          teacher:teacher
+        }).then(async (data) => {
+          await Wallet.findOneAndUpdate(
+            { name: "Admin" },
+
+            { $inc: { balance: amount },
+            $push: { transactions: data._id },
+          },
+            
+          );
+        });
+
         res.json({ status: true, result: data });
       });
   } catch (error) {
@@ -491,14 +511,15 @@ const create_chat = async (req, res) => {
   console.log(req.userId);
 
   try {
-    await  messageDb.create({
-      sender: req.userId,
-      receiver: teacher,
-      message: message,
-    })
+    await messageDb
+      .create({
+        sender: req.userId,
+        receiver: teacher,
+        message: message,
+      })
       .then((data) => {
         console.log(data);
-        res.json({result:data})
+        res.json({ result: data });
       })
       .catch((err) => {
         console.log(err);
@@ -508,46 +529,79 @@ const create_chat = async (req, res) => {
   }
 };
 
-const get_messages=async(req,res)=>{
-  console.log(req.query,222)
+const get_messages = async (req, res) => {
+  console.log(req.query, 222);
 
-  const{teacher}=req.query
-  const userId=req.userId
+  const { teacher } = req.query;
+  const userId = req.userId;
 
-  console.log(teacher,userId);
+  console.log(teacher, userId);
   try {
-  const messagesSend=  await  messageDb.find({
-      sender:userId,
-      receiver:teacher,
+    const messagesSend = await messageDb
+      .find({
+        sender: userId,
+        receiver: teacher,
+      })
+      .sort({ createdAt: -1 });
+    const messageRecieved = await messageDb.find({
+      sender: teacher,
+      receiver: userId,
+    });
 
-    }).sort({createdAt:-1})
-const messageRecieved=await messageDb.find({
-  sender:teacher,
-  receiver:userId,
+    const result = messageRecieved.concat(messagesSend);
 
-})
+    result.sort(function (a, b) {
+      return a.createdAt - b.createdAt;
+    });
 
- const result=messageRecieved.concat(messagesSend)
-
-  
-    result.sort(function(a,b){
-      return a. createdAt - b. createdAt;
-    })
-
-    
-  res.json({result: result})
-
- 
-   
-
+    res.json({ result: result });
   } catch (error) {
     console.log(error);
   }
+};
 
+const get_chat_reciever = async (req, res) => {
+  console.log(req.query);
+  const { teacher } = req.query;
+  await teacherDb.findById(teacher).then((data) => {
+    res.json({ result: data });
+  });
+};
 
+const customer_review = async (req, res) => {
+  try {
+    let totalRatings = 0;
+    const student_id = req.userId;
+    const { count, review, teacher_id } = req.body;
 
+    await reviewDb
+      .create({
+        rating: count,
+        comment: review,
+        teacher: teacher_id,
+        student: student_id,
+      })
+      .then(async (data) => {
+        console.log(data);
+        const reviews = await reviewDb.find({ teacher: teacher_id });
+        const count = review.length;
+        reviews.forEach((element) => {
+          totalRatings = element.rating + totalRatings;
+        });
 
-}
+        const rating = totalRatings / count;
+
+        await teacherDb.findOneAndUpdate(
+          { _id: teacher_id },
+          { rating: rating }
+        );
+
+        res.json({ status: true });
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export {
   signup,
@@ -573,4 +627,6 @@ export {
   cancel_booking,
   create_chat,
   get_messages,
+  get_chat_reciever,
+  customer_review,
 };

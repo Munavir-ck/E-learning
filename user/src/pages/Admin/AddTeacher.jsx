@@ -5,7 +5,7 @@ import { Fragment } from "react";
 function AddTeacher() {
   return (
     <Fragment>
-    <div className='flex'>
+    <div className='flex overflow-hidden'>
         
         <Sidebar/>
      

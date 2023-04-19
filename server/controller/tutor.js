@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import orderDb from "../model/order.js";
 import mongoose from "mongoose";
 import  messageDb from "../model/chat.js";
+import studentDb from "../model/user.js";
 
 const googleAuthTutor = async (req, res) => {
   try {
@@ -230,6 +231,15 @@ const get_messages=async(req,res)=>{
   }
 }
 
+const get_chat_reciever=async (req,res)=>{
+ 
+
+  const {student}=req.query
+  await studentDb.findById(student).then((data)=>{
+    res.json({result:data})
+  })
+}
+
 export {
   edit_profile_image,
   get_profile,
@@ -240,4 +250,5 @@ export {
   booking_actions,
   create_chat,
   get_messages,
+  get_chat_reciever,
 };

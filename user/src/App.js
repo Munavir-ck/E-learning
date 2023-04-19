@@ -1,6 +1,9 @@
 
 import { BrowserRouter, Route,Routes } from 'react-router-dom';
+import { toast, ToastContainer } from "react-toastify";
+import { useSocket } from "../src/contex/socketProvider";
 import './App.css';
+import { useState,useEffect } from 'react';
 import Home from './pages/Client/Home';
 import Demo_classes from './pages/Client/Demo_classes';
 import  TeachersPage from './pages/Client/TeachersPage';
@@ -25,12 +28,46 @@ import List_booking_page from './pages/Client/List_booking_page';
 import RoomPage from './Components/screen/Room';
 import ChatPage from './pages/Client/ChatPage';
 import ChatRoomTutorPage from './pages/Tutor/ChatRoomPage';
+import Transaction_page from './pages/Admin/Transaction_page';
 
 
 
 function App() {
+  const socket = useSocket();
+  const [notification, setNotification] = useState(false);
+  const handleNotification = (data) => {
+
+
+    setNotification(true);
+
+    toast.success("iam waitiiiiiiiiiiiiing");
+    Notification.requestPermission().then((perm) => {
+      if (perm === "granted") {
+        const notification = new Notification("Incoming Video call", {
+          body: "You have a video call",
+          icon: "assets/icons/help-question-svgrepo-com.svg",
+          tag: "video call",
+          vibrate: [200, 100, 200],
+        });
+        notification.addEventListener("click", () => {
+          // this.route.navigate(['/video-room',roomParams,user])
+        });
+      }
+    });
+  };
+
+
+
+  useEffect(() => {
+    socket.on("student:notification", handleNotification);
+    return () => {
+      setNotification(false);
+      socket.off("student:notification", handleNotification);
+    };
+  }, []);
   return (
     <div >
+       <ToastContainer/>
    <BrowserRouter>
     <Routes>
 
@@ -58,6 +95,7 @@ function App() {
       <Route path='/admin/teachers' element={<TeachersList/>}/>
       <Route path='/admin/uploadclass' element={<Upload/>}/>
       <Route path='/admin/add_subject' element={<Add_subjectPage/>}/>
+      <Route path='/admin/transactions' element={<Transaction_page/>}/>
     
 
 

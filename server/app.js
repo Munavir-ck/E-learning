@@ -60,7 +60,7 @@ app.use("/",user)
 const emailToSocketIdMap = new Map();
 const socketidToEmailMap = new Map();
 
-const existingRooms = [];
+
 io.on("connection", (socket) => {
 
     console.log(`Socket Connected`, socket.id);
@@ -79,21 +79,23 @@ io.on("connection", (socket) => {
   })
   
  socket.on("room:joinchat",(data)=>{
-    if (existingRooms.includes(data)) {
-        socket.emit("roomAlreadyExists",data);
-      } else {
-        existingRooms.push(data);
-                socket.join(data)
-            io.to(data).emit("user:joined",data)
+
+  socket.emit("user:joined",data)
+    // if (existingRooms.includes(data)) {
+    //     socket.emit("roomAlreadyExists",data);
+    //   } else {
+    //     existingRooms.push(data);
+    //             socket.join(data)
+    //         io.to(data).emit("user:joined",data)
        
-      }
+    //   }
  })
 
  socket.on("user:message",({data,studentId})=>{
 
   console.log(data,studentId,"user:messagecommmmmmmmmmmmm");
-  io.to(studentId).emit("new:message",data)
-    console.log(data);
+ 
+  socket.broadcast.emit("new:message",data)
  })
 
 
@@ -106,6 +108,13 @@ io.on("connection", (socket) => {
     socket.join(room);
     io.to(socket.id).emit("room:join", data);
   });
+
+socket.on("user:chatInvideo",({to,chat})=>{
+  console.log(chat);
+  io.to(to).emit("user:displaychat", { to,chat });
+  
+})
+
 
   socket.on("user:call", ({ to, offer }) => {
     io.to(to).emit("incomming:call", { from: socket.id, offer });

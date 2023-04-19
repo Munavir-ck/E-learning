@@ -9,9 +9,14 @@ const teacherSchema = new mongoose.Schema(
 
     email: {
       type: String,
-      required: true,
-      //   unique: true,
-      //   lowercase: true,
+      required: [true, "Email is Required"],
+      unique: true,
+    },
+    state: {
+      type: String,
+    },
+    FEE: {
+      type: Number,
     },
 
     subject: {
@@ -38,6 +43,16 @@ const teacherSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    wallet: {
+      type:Number,
+      default:0
+    },
+    
+     rating:{
+      type:Number,
+      default:0,
+     }
+    ,
     slot: [
       {
         date: { type: Date },

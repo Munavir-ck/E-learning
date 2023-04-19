@@ -4,16 +4,16 @@ import axios from "../../../axios/axios";
 import { useSelector } from "react-redux";
 
 // import { useSelector } from "react-redux";
-function ChatInput({setMessages}) {
+function ChatInput({setMessages,setnewMessage}) {
   const teacher_id = useSelector((state) => state.teacher.teacher_id);
   const student_Id=useSelector((state)=>state.student._id)
 
   const socket = useSocket();
 
   const [chat, setChat] = useState("");
-  const[newMessage,setnewMessage]=useState("")
+  // const[newMessage,setnewMessage]=useState("")
 
-  console.log(newMessage,"here is new messaes");
+  // console.log(newMessage,"here is new messaes");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,6 +73,7 @@ function ChatInput({setMessages}) {
       .then((res) => {
       console.log(res.data.result);
         setMessages(res.data.result)
+        setnewMessage("")
       });
   }, [chat]);
   

@@ -1,13 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ChatInput from "./ChatInput";
 import { useSelector } from "react-redux";
+import axios from "../../../axios/axios";
 function ChatRoom() {
+  const student_Id = useSelector((state) => state.studentId.student_Id);
+  const[messages,setMessages]=useState([])
+  const [newMessage, setnewMessage] = useState("");
+  const [student,setStudent]=useState({})
+
+
+
+  useEffect(()=>{
+    axios
+    .get("/tutor/get_chat_reciever", {
+      params: {
+        student: student_Id,
+      },
+
+      headers: {
+        Authorization: localStorage.getItem("tutortoken"),
+      },
+    })
+    .then((res) => {
+      setStudent(res.data.result)
+  
+    });
+  },[])
 
   const teacher=useSelector(state=>state.tutor.tutor_id)
 
-  console.log(teacher);
+  console.log(student);
 
-  const[messages,setMessages]=useState([])
+
+  console.log(newMessage,"here is new message tutor");
   return (
     <div class="flex h-screen antialiased text-gray-800">
       <div class="flex flex-row h-full w-full overflow-x-hidden">
@@ -34,13 +59,13 @@ function ChatRoom() {
           <div class="flex flex-col items-center bg-indigo-100 border border-gray-200 mt-4 w-full py-6 px-4 rounded-lg">
             <div class="h-20 w-20 rounded-full border overflow-hidden">
               <img
-                src="https://avatars3.githubusercontent.com/u/2763884?s=128"
+                src={student.image}
                 alt="Avatar"
                 class="h-full w-full"
               />
             </div>
-            <div class="text-sm font-semibold mt-2">Aminos Co.</div>
-            <div class="text-xs text-gray-500">Lead UI/UX Designer</div>
+            <div class="text-sm font-semibold mt-2">{student.name}</div>
+            <div class="text-xs text-gray-500">{student.email}</div>
             <div class="flex flex-row items-center mt-3">
               <div class="flex flex-col justify-center h-4 w-8 bg-indigo-500 rounded-full">
                 <div class="h-3 w-3 bg-white rounded-full self-end mr-1"></div>
@@ -93,17 +118,22 @@ function ChatRoom() {
                       </div>
                     </div>
                   </div> */}
-
-                  {/* <div class="col-start-1 col-end-8 p-3 rounded-lg">
+         {newMessage&&
+         
+         
+                  <div class="col-start-1 col-end-8 p-3 rounded-lg">
                     <div class="flex flex-row items-center">
                       <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
                         A
                       </div>
                       <div class="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                        <div>Lorem ipsum dolor sit amet !</div>
+                        <div>{newMessage}</div>
                       </div>
                     </div>
-                  </div> */}
+                  </div>
+         
+         
+         }
                   {/* <div class="col-start-6 col-end-13 p-3 rounded-lg">
                     <div class="flex items-center justify-start flex-row-reverse">
                       <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
@@ -154,7 +184,7 @@ function ChatRoom() {
                   </svg>
                 </button>
               </div>
-              <ChatInput setMessages={setMessages} />
+              <ChatInput setMessages={setMessages}   setnewMessage={setnewMessage}/>
              
             </div>
           </div>

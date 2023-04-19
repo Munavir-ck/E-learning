@@ -1,123 +1,109 @@
-import React, { useEffect, useState, useMemo,useCallback} from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { GoVerified } from "react-icons/go";
 import { GiCancel } from "react-icons/gi";
 import { BsFillChatFill } from "react-icons/bs";
+import { FcVideoCall } from "react-icons/fc";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "../../axios/axios";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setRoom} from "../../Store/Slice/socketSlice";
-import {io} from 'socket.io-client'
-import { useSelector } from 'react-redux'
+import { setRoom } from "../../Store/Slice/socketSlice";
+import { io } from "socket.io-client";
+import { useSelector } from "react-redux";
 import { useSocket } from "../../contex/socketProvider";
 import { setTeacher } from "../../Store/Slice/teacherSlice";
 
-
 const List_bookings = () => {
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const socket = useSocket();
   const [notification, setNotification] = useState(false);
   const navigate = useNavigate();
 
- 
-  const email = useSelector(state => state.student.email);
-  const room = useSelector(state => state.room.room);
+  const email = useSelector((state) => state.student.email);
+  const room = useSelector((state) => state.room.room);
 
+  const handlechat = (studentId, teacherId) => {
+    socket.emit("room:joinchat", studentId);
 
-const handlechat=(studentId,teacherId)=>{
+    dispatch(
+      setTeacher({
+        teacherId: teacherId,
+      })
+    );
+  };
 
- 
-  socket.emit("room:joinchat",studentId)
+  const handlejoinChatRoom = (data) => {
+    navigate(`/chat_room/${data}`);
+  };
 
-  dispatch(
-    setTeacher({
-      teacherId:teacherId
-    })
-  )
-}
-
-
-const handlejoinChatRoom=(data)=>{
-  navigate(`/chat_room/${data}`)
-   }
-
-   useEffect(() => {
-    socket.on("roomAlreadyExists",handlejoinChatRoom);
-    socket.on("user:joined",handlejoinChatRoom)
+  useEffect(() => {
+    socket.on("roomAlreadyExists", handlejoinChatRoom);
+    socket.on("user:joined", handlejoinChatRoom);
 
     return () => {
-      socket.off("roomAlreadyExists",handlejoinChatRoom);
-      socket.off("user:joined",handlejoinChatRoom)
+      socket.off("roomAlreadyExists", handlejoinChatRoom);
+      socket.off("user:joined", handlejoinChatRoom);
     };
   }, [socket]);
 
- const handleOnclick=()=>{
-       socket.emit('room:join',{email,room})  
+  const handleOnclick = (teacherId) => {
 
-      
-      notification&&toast.error("ready")
-     
-   }
+    console.log(teacherId);
+    socket.emit("room:join", { email, room });
+    dispatch(
+      setTeacher({
+        teacherId: teacherId,
+      })
+    );
 
+    notification && toast.error("ready");
+  };
 
-   console.log(notification,"my notify");
+  console.log(notification, "my notify");
 
-   const handleNotification=(data)=>{
+  const handleNotification = (data) => {
     setNotification(true);
-   
-     toast.success("iam waitiiiiiiiiiiiiing")
-    Notification.requestPermission().then(perm=>{
 
-      if(perm === 'granted' ){
-
-        const notification =   new Notification("Incoming Video call",{
-          body:"You have a video call",
-          icon:'assets/icons/help-question-svgrepo-com.svg',
-          tag:'video call',
-          vibrate: [200, 100, 200]
-        })
-        notification.addEventListener('click',()=>{
-            
+    toast.success("iam waitiiiiiiiiiiiiing");
+    Notification.requestPermission().then((perm) => {
+      if (perm === "granted") {
+        const notification = new Notification("Incoming Video call", {
+          body: "You have a video call",
+          icon: "assets/icons/help-question-svgrepo-com.svg",
+          tag: "video call",
+          vibrate: [200, 100, 200],
+        });
+        notification.addEventListener("click", () => {
           // this.route.navigate(['/video-room',roomParams,user])
-        })
+        });
       }
+    });
+  };
+  const handlejoinRoom = useCallback(
+    (data) => {
+      const { email, room } = data;
+      navigate(`/room/${room}`);
+    },
+    [navigate]
+  );
 
-    })
+  useEffect(() => {
+    socket.on("student:notification", handleNotification);
+    return () => {
+      setNotification(false);
+      socket.off("student:notification", handleNotification);
+    };
+  }, []);
 
+  useEffect(() => {
+    socket.on("room:join", handlejoinRoom);
 
-   }
-const handlejoinRoom=useCallback((data)=>{
-  const{email,room}=data
-  navigate(`/room/${room}`)
- 
-},[navigate])
-
-
-
-useEffect(()=>{
-  
-  socket.on('student:notification',handleNotification)
-  return ()=>{
-    setNotification(false);
-    socket.off('student:notification',handleNotification)
-  } 
-},[handleNotification])
-
-
-useEffect(()=>{
-  
-  
-  socket.on('room:join',handlejoinRoom) 
- 
-
-  return ()=>{
-    socket.off('room:join',handlejoinRoom)
-  }
-})
-
-
+    return () => {
+      socket.off("room:join", handlejoinRoom);
+    };
+  });
 
   const [bookings, setBookings] = useState([]);
   const now = new Date();
@@ -133,12 +119,12 @@ useEffect(()=>{
   const futureTime = new Date(now.getTime() + 10 * 60000);
   const future_hours = futureTime.getHours();
   const future_minutes = futureTime.getMinutes();
-  console.log(time,"cuttern");
+  console.log(time, "cuttern");
   const future_time =
     future_hours.toString().padStart(2, "0") +
     ":" +
     future_minutes.toString().padStart(2, "0");
-  console.log(future_time,"future");
+  console.log(future_time, "future");
   useEffect(() => {
     axios
       .get("/get_bookings", {
@@ -147,7 +133,6 @@ useEffect(()=>{
         },
       })
       .then((res) => {
-       
         setBookings(res.data.result);
       });
   }, []);
@@ -156,9 +141,6 @@ useEffect(()=>{
   //   console.log(item.slot.startTime,"start time");
   //   console.log(time>item.slot.startTime&&time<item.slot.endTime);
   // })
-
-
-
 
   const handleActions = (slot_id, order_id) => {
     axios
@@ -280,37 +262,36 @@ useEffect(()=>{
                   <span className="text-gray-600 text-sm">{item.amount}</span>
                 </div>
                 <div className="w-1/4">
-                  <span className="text-gray-600 text-sm">
+                  <span className="text-gray-600 text-sm flex justify-between">
                     {" "}
                     {item.slot.booking_status === "Cancelled" ? (
                       <div></div>
+                    ) : time > item.slot.startTime &&
+                      time < item.slot.endTime ? (
+                      <button
+                        onClick={() => handleOnclick(item.teacher[0]._id)}
+                        className="bg-red-600"
+                      >
+                        <FcVideoCall size={30} />
+                      </button>
                     ) : (
-                    
-                       
-                       
-                        (time>item.slot.startTime&&time<item.slot.endTime)? 
-                          <button
-                          onClick={()=>handleOnclick()}
-                          className="bg-red-600">Join Now</button>: 
-                          <button
-                          className="hover:bg-zinc-700"
-                          onClick={() => handleActions(item.slot._id, item._id)}
-                          //   data-id={item.slot._id}
-                          //   data-order_id={item._id}
-                          //   data-value="decline"
-                        >
-                          <GiCancel size={20} color="red" />
-                        </button>
-                   
-                        
-                        
-                      
-                     
+                      <button
+                        className="hover:bg-zinc-700"
+                        onClick={() => handleActions(item.slot._id, item._id)}
+                        //   data-id={item.slot._id}
+                        //   data-order_id={item._id}
+                        //   data-value="decline"
+                      >
+                        <GiCancel size={20} color="red" />
+                      </button>
                     )}
-                     <button onClick={()=>handlechat(item.student,item.teacher[0]._id)}>
-                                <BsFillChatFill size={20} color="blue" />
-                              </button>
-                   
+                    <button
+                      onClick={() =>
+                        handlechat(item.student, item.teacher[0]._id)
+                      }
+                    >
+                      <BsFillChatFill size={30} color="blue" />
+                    </button>
                   </span>
                 </div>
               </div>

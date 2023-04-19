@@ -27,6 +27,9 @@ import { signup,login,
     cancel_booking,
     create_chat,
     get_messages,
+    get_chat_reciever,
+    customer_review,
+    
 } from "../controller/user.js";
 const router=express.Router()
 
@@ -63,5 +66,8 @@ router.get("/get_bookings",verifyuserJWT,get_bookings)
 router.post("/cancel_booking",verifyuserJWT,cancel_booking)
 router.post("/create_chat",verifyuserJWT,create_chat)
 router.get("/get_messages",verifyuserJWT,get_messages)
+router.get("/get_chat_reciever",verifyuserJWT,get_chat_reciever)
+router.post("/customer_review",verifyuserJWT,customer_review)
+
 
 export default router

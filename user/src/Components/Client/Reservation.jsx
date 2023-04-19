@@ -70,7 +70,7 @@ const [modal,setmodal]=useState(false)
 
 
 
-  const amount = 50;
+  // const amount = 50;
 
   const customStyles = {
     content: {
@@ -225,7 +225,7 @@ const [modal,setmodal]=useState(false)
                       FEE :
                     </span>
                     <span class="title-font font-medium text-2xl text-gray-900">
-                      {amount}
+                      {teacher.FEE}
                     </span>
                   </div>
                 </label>
@@ -290,7 +290,7 @@ const [modal,setmodal]=useState(false)
             </button>
             <div className="w-80 mt-10">
             {submit && 
-             <Paypal amount={amount} checkedValues={checkedValues}/>
+             <Paypal amount={teacher.FEE} checkedValues={checkedValues}/>
              }
              </div>
           </div>

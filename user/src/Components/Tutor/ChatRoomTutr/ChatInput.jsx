@@ -3,14 +3,14 @@ import { useSocket } from "../../../contex/socketProvider";
 import axios from "../../../axios/axios";
 import { useSelector } from "react-redux";
 
-function ChatInput({ setMessages }) {
+function ChatInput({ setMessages, setnewMessage }) {
   const student_Id = useSelector((state) => state.studentId.student_Id);
   const socket = useSocket();
 
   const [chat, setChat] = useState("");
-  const [newMessage, setnewMessage] = useState("");
+ 
 
-  console.log(newMessage, "here is new messaes");
+  // console.log(newMessage, "here is new messaes");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,11 +27,11 @@ function ChatInput({ setMessages }) {
     socket.emit("user:message", { data: chat, studentId: student_Id });
     setChat("");
   };
-  const handleNewMessage = (data) => {
-    console.log("here is new socketwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
-    setnewMessage(data);
-  };
-
+  
+  const handleNewMessage=(data)=>{
+    console.log(data,"here is new socketDDDDDDDDDDDDDDDDDDD");
+    setnewMessage(data)
+    }
   useEffect(() => {
     socket.on("new:message", handleNewMessage);
 
@@ -48,6 +48,7 @@ function ChatInput({ setMessages }) {
       })
       .then((res) => {
         setMessages(res.data.result);
+        setnewMessage("")
       });
   }, [chat]);
 
