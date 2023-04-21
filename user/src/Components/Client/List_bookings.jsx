@@ -19,7 +19,11 @@ const List_bookings = () => {
   const dispatch = useDispatch();
   const socket = useSocket();
   const [notification, setNotification] = useState(false);
+  const [bookings, setBookings] = useState([]);
   const navigate = useNavigate();
+
+
+  console.log(bookings);
 
   const email = useSelector((state) => state.student.email);
   const room = useSelector((state) => state.room.room);
@@ -105,7 +109,7 @@ const List_bookings = () => {
     };
   });
 
-  const [bookings, setBookings] = useState([]);
+  
   const now = new Date();
 
   const currentTime = new Date(now.getTime());
@@ -126,6 +130,7 @@ const List_bookings = () => {
     future_minutes.toString().padStart(2, "0");
   console.log(future_time, "future");
   useEffect(() => {
+    console.log(344343434343443);
     axios
       .get("/get_bookings", {
         headers: {
@@ -133,6 +138,7 @@ const List_bookings = () => {
         },
       })
       .then((res) => {
+        console.log(res.data);
         setBookings(res.data.result);
       });
   }, []);

@@ -180,6 +180,13 @@ const share_profit = async (req, res) => {
   
 };
 
+const get_subject=async(req,res)=>{
+
+  await subjectDb.find({}).then((data)=>{
+    res.json({result:data})
+  })
+}
+
 export {
   login,
   add_teachers,
@@ -189,4 +196,5 @@ export {
   get_wallet,
   get_transactions,
   share_profit,
+  get_subject,
 };

@@ -141,7 +141,7 @@ function Booking() {
 
     axios
       .get(
-        `/get_subject`,
+        `/get_filtred_subject`,
         { params: { student_id: student_id } },
         {
           headers: {

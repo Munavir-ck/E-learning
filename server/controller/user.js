@@ -130,6 +130,7 @@ const verify_otp = (req, res) => {
 
 const get_teachers = async (req, res) => {
   try {
+    console.log(12121211212);
     await teacherDb
       .find({})
       .then((data) => {
@@ -241,7 +242,7 @@ const filter_teachers = async (req, res) => {
   }
 };
 
-const get_subject = async (req, res) => {
+const get_filtred_subject = async (req, res) => {
   let studentClass;
   const ID = req.query.student_id;
 
@@ -419,15 +420,12 @@ const creat_booking = async (req, res) => {
           amount: amount,
           from: student,
           to: "Admin",
-          teacher:teacher
+          teacher: teacher,
         }).then(async (data) => {
           await Wallet.findOneAndUpdate(
             { name: "Admin" },
 
-            { $inc: { balance: amount },
-            $push: { transactions: data._id },
-          },
-            
+            { $inc: { balance: amount }, $push: { transactions: data._id } }
           );
         });
 
@@ -584,10 +582,14 @@ const customer_review = async (req, res) => {
       .then(async (data) => {
         console.log(data);
         const reviews = await reviewDb.find({ teacher: teacher_id });
-        const count = review.length;
+
+        const count = reviews.length;
         reviews.forEach((element) => {
           totalRatings = element.rating + totalRatings;
         });
+
+        console.log(totalRatings, "totalR");
+        console.log(count, "count");
 
         const rating = totalRatings / count;
 
@@ -603,6 +605,105 @@ const customer_review = async (req, res) => {
   }
 };
 
+const get_reviews = async (req, res) => {
+  const { id } = req.query;
+  await reviewDb
+    .find({
+      teacher: id,
+    })
+    .populate("student", "name image")
+    .then((data) => {
+      console.log(data);
+      res.json({ result: data });
+    });
+};
+
+const get_subject = async (req, res) => {
+  console.log(343434343434);
+  await subjectDb.find({}).then((data) => {
+    console.log(data);
+    res.json({ status: true, result: data });
+  });
+};
+
+const filter_our_teacher = async (req, res) => {
+  console.log(121212122);
+  console.log(req.body);
+  const { checkedValues } = req.body;
+
+  let ratingArr = [];
+  let subjectArr = [];
+  let classesArr = [];
+
+  if (checkedValues) {
+    const ratings = checkedValues.filter(
+      (item) => item.id !== "subject" && item.id !== "class"
+    );
+
+    const subjects = checkedValues.filter(
+      (item) => item.id !== "rating" && item.id !== "class"
+    );
+
+    const classes = checkedValues.filter(
+      (item) => item.id !== "rating" && item.id !== "subject"
+    );
+
+    ratings.map((item) => {
+      const value = parseInt(item.value);
+      ratingArr.push(value);
+    });
+    subjects.map((item) => {
+      subjectArr.push(item.value);
+    });
+
+    classes.map((item) => {
+      classesArr.push(item.value);
+    });
+
+    const maxRating = Math.max(...ratingArr);
+
+    console.log(maxRating,"max rating");
+    console.log(ratings), "rating";
+    console.log(subjects, "subject");
+    console.log(classes, "class");
+
+    await teacherDb
+      .aggregate([
+        {
+          $match: {
+            $or: [
+              { subject: { $in: subjectArr } },
+              { class: { $in: classesArr } },
+              { rating: { $in: ratingArr } },
+              { rating: { $gt: maxRating },}
+            ],
+           
+          },
+        },
+      ])
+      .then((data) => {
+        console.log(data, 66666);
+        res.json({ result: data });
+      });
+  }
+
+  console.log(ratingArr, "rating");
+  console.log(subjectArr, 2323232323232);
+  console.log(classesArr, 2323232323232);
+
+  // console.log(rating);
+
+  //    if(checkedValues.id==='rating'){
+  //       console.log('rating');
+  //    }
+  //    else if(checkedValues.id==='class'){
+  //    console.log('class');
+  //    }
+  //    else if(checkedValues.id==='subject'){
+  //   console.log('subject');
+  //    }
+};
+
 export {
   signup,
   login,
@@ -614,7 +715,7 @@ export {
   search_class,
   search_teacher,
   filter_teachers,
-  get_subject,
+  get_filtred_subject,
   get_profile,
   edit_profile_image,
   get_teacherDetais,
@@ -629,4 +730,7 @@ export {
   get_messages,
   get_chat_reciever,
   customer_review,
+  get_reviews,
+  get_subject,
+  filter_our_teacher,
 };

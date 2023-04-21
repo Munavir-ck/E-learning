@@ -1,6 +1,7 @@
 import Sidebar from "../../Components/Admin/Sidebar";
 import Linechart from "../../Components/Admin/Linechart";
 import AdminData from "../../Components/Admin/AdminData";
+// import Chart from  "../../Components/Admin/Chart/Chart"
 import { Fragment } from "react";
 
 import React from 'react'

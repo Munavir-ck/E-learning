@@ -14,7 +14,7 @@ import { signup,login,
     search_class,
     search_teacher,
     filter_teachers,
-    get_subject,
+    get_filtred_subject,
     get_profile,
     edit_profile_image,
     get_teacherDetais,
@@ -29,8 +29,11 @@ import { signup,login,
     get_messages,
     get_chat_reciever,
     customer_review,
-    
+    get_reviews,
+    get_subject,
+    filter_our_teacher,
 } from "../controller/user.js";
+
 const router=express.Router()
 
 
@@ -53,7 +56,7 @@ router.get('/get_teachers',get_teachers)
 router.post( '/search_class',search_class)
 router.post("/search_teacher",search_teacher)
 router.get('/filter_teachers',filter_teachers)
-router.get("/get_subject",get_subject)
+router.get("/get_filtred_subject",get_filtred_subject)
 router.get("/get_profile",verifyuserJWT,get_profile)
 router.post("/edit_profile_image",verifyuserJWT,edit_profile_image)
 router.get("/get_teacherDetails",get_teacherDetais)
@@ -68,6 +71,9 @@ router.post("/create_chat",verifyuserJWT,create_chat)
 router.get("/get_messages",verifyuserJWT,get_messages)
 router.get("/get_chat_reciever",verifyuserJWT,get_chat_reciever)
 router.post("/customer_review",verifyuserJWT,customer_review)
+router.get("/get_reviews",get_reviews)
+router.get("/get_subject",get_subject)
+router.post("/filter_our_teacher",filter_our_teacher)
 
 
 export default router

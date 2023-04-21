@@ -1,111 +1,460 @@
-import { useState, useEffect } from "react";
-import axios from "../../axios/axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { motion } from "framer-motion";
-import SearchTeacher from "./Search/SearchTeacher";
-import { Link } from "react-router-dom";
 
-export default function Teachers() {
+import axios from "../../axios/axios";
+import React from "react";
+import { Fragment, useState, useEffect } from "react";
+import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import {AiFillStar} from "react-icons/ai"
+import {
+  ChevronDownIcon,
+  FunnelIcon,
+  MinusIcon,
+  PlusIcon,
+  Squares2X2Icon,
+} from "@heroicons/react/20/solid";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { BsFillChatFill } from "react-icons/bs";
+
+
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
+function Booking() {
+  const [checkedValues, setCheckedValues] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [searchError, setError] = useState(null);
-  const [searchResult, setSearchResult] = useState([]);
-  const posts = [1, 2, 3, 4];
+  const [error, setError] = useState(" ");
+  const [subject, setSubject] = useState([]);
+  const student_id = useSelector((state) => state.student._id);
+
+  
+
+  const handleChange = (e) => {
+    setSubject(e.target.value);
+  };
+
+  const handleCheckboxChange = (e) => {
+    const value = e.target.value;
+    const id=e.target.id
+
+    const isChecked = e.target.checked;
+
+    if (isChecked) {
+      setCheckedValues([...checkedValues, {value,id}]);
+    } else {
+      setCheckedValues(checkedValues.filter((item) => item.value !== value));
+    }
+  };
 
   useEffect(() => {
-    async function teachersList() {
-      console.log(1111);
-      await axios
-        .get("/get_teachers", {})
-        .then((res) => {
-          if (res.data.status) {
-            setTeachers(res.data.data);
-          }
-        })
-        .catch((err) => {});
-    }
-    teachersList();
-
-    console.log(teachers, 111);
-  }, []);
-  return (
-    <>
-      <div className=" w-full h-40  flex items-center justify-center ">
-        <motion.h1
-          initial={{ opacity: 0, y: 30, x: 100 }}
-          animate={{
-            opacity: 1,
-            fontSize: 50,
-            x: 50,
-            y: -10,
-            color: "#18355c",
-          }}
-          transition={{ delay: 0.5, type: "spring", stiffness: 120 }}
-          className="text-6xl font-semibold font-monospace text-mycolors_b"
-        >
-          Meet Our Teachers
-        </motion.h1>
-      </div>
-      <div className="mb-24 ml-24">
-        <SearchTeacher setData={setSearchResult} setError={setError} />
-      </div>
-
-      <div
-        className={
-          searchError
-            ? "w-full flex h-full  justify-center"
-            : "h-full colo p-16 grid gap-6 mt-10  text-center sm:h-full grid-cols-2 m-8 md:grid-cols-4 shadow-lg  cursor-pointer"
+    console.log('iam useeffect');
+    console.log(checkedValues,2323232323232323);
+    axios
+      .post(
+        `/filter_our_teacher`,
+        { checkedValues }
+       
+      )
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.status) {
+          setTeachers(res.data.result);
+        } else {
+          setTeachers([]);
+          setError(res.data.message);
         }
-      >
-        {searchError ? (
-          <img
-            className="h-80 object-contain"
-            src="data:image/png;base64,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"
-          ></img>
-        ) : (
-          (searchResult.length ? searchResult : teachers).map((items, key) => (
-            <Link to={`/teacher_details/${items._id}`}
-            
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [checkedValues]);
+
+ 
+
+  useEffect(() => {
+    axios
+      .get("/get_teachers")
+      .then((res) => {
+        if (res.data.status) {
+          setTeachers(res.data.data);
+        } else {
+          setTeachers([]);
+          setError(res.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [checkedValues]);
+
+  useEffect(() => {
+ 
+
+    axios
+      .get(
+        `/get_subject`,
+        { params: { student_id: student_id } },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data, 2222222);
+        if (res.data.status) {
+          setSubject(res.data.result);
+        } else {
+          setError(res.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  // console.log(subject,23232323);
+const classes=[1,2,3,4,5,6,7]
+const stars=[1,2,3,4,5]
+  const filters = [
+    {
+      id: "subject",
+      name: "subject",
+      options: subject.map((item) => {
+        return { value: item.subject, label: item.subject, id: "subject", checked: false };
+    })
+    },
+    {
+      id: "class",
+      name: "class",
+      options:classes.map((item,index) => {
+        return { value: item, label: item, id: "class", checked: false };
+    })
+    },
+    {
+      id: "rating",
+      name: "rating",
+      options:stars.map((item,index) => {
+        return { value: item, label:item , icon: <AiFillStar color="yellow" /> , id:"star",checked: false };
+    })
+    },
+    
+  ];
+ 
+  // console.log(subject, 333333);
+
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+
+  return (
+    <div className="bg-white">
+      <div>
+        {/* Mobile filter dialog */}
+        <Transition.Root show={mobileFiltersOpen} as={Fragment}>
+          <Dialog
+            as="div"
+            className="relative z-40 lg:hidden"
+            onClose={setMobileFiltersOpen}
+          >
+            <Transition.Child
+              as={Fragment}
+              enter="transition-opacity ease-linear duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity ease-linear duration-300"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
             >
-              <motion.div
-                whileHover={{ scale: 1.1, color: "#e1eaf0" }}
-                transition={{ type: "spring", stiffness: 120 }}
-                
+              <div className="fixed inset-0 bg-black bg-opacity-25" />
+            </Transition.Child>
+
+            <div className="fixed inset-0 z-40 flex">
+              <Transition.Child
+                as={Fragment}
+                enter="transition ease-in-out duration-300 transform"
+                enterFrom="translate-x-full"
+                enterTo="translate-x-0"
+                leave="transition ease-in-out duration-300 transform"
+                leaveFrom="translate-x-0"
+                leaveTo="translate-x-full"
               >
-                <a href="#" class="group relative block bg-black">
-                  <img
-                    alt="Developer"
-                    src={items.image ? items.image : "../../../avatar.png"}
-                    className="absolute inset-0 h-full w-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
-                  />
-
-                  <div className="relative p-4 sm:p-6 lg:p-8">
-                    <p className="text-sm font-medium uppercase tracking-widest text-pink-500">
-                      {items.qualification}
-                    </p>
-
-                    <p className="text-xl font-bold text-white sm:text-2xl">
-                      {" "}
-                      {items.name}
-                    </p>
-
-                    <div className="mt-32 sm:mt-48 lg:mt-64">
-                      <div className="translate-y-8 transform opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
-                        <p className="text-sm text-white">
-                          Lorem ipsum dolor, sit amet consectetur adipisicing
-                          elit. Omnis perferendis hic asperiores quibusdam
-                          quidem voluptates doloremque reiciendis nostrum harum.
-                          Repudiandae?
-                        </p>
-                      </div>
-                    </div>
+                <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl">
+                  <div className="flex items-center justify-between px-4">
+                    <h2 className="text-lg font-medium text-gray-900">
+                      Filters
+                    </h2>
+                    <button
+                      type="button"
+                      className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
+                      onClick={() => setMobileFiltersOpen(false)}
+                    >
+                      <span className="sr-only">Close menu</span>
+                      <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                    </button>
                   </div>
-                </a>
-              </motion.div>
-            </Link>
-          ))
-        )}
+
+                  {/* Filters */}
+                  <form className="mt-4 border-t border-gray-200 divide-x-2">
+                    <h3 className="sr-only">Categories</h3>
+                    {/* <ul role="list" className="px-2 py-3 font-medium text-gray-900">
+                      {subCategories.map((Class) => (
+                        <li key={Class.name}>
+                          <a href={Class.href} className="block px-2 py-3">
+                            {Class.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul> */}
+
+                    {filters.map((section) => (
+                      <Disclosure
+                        as="div"
+                        key={section.id}
+                        className="border-t border-gray-200 px-4 py-6"
+                      >
+                        {({ open }) => (
+                          <>
+                            <h3 className="-mx-2 -my-3 flow-root">
+                              <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
+                                <span className="font-medium text-gray-900">
+                                  {section.name}
+                                </span>
+                                <span className="ml-6 flex items-center">
+                                  {open ? (
+                                    <MinusIcon
+                                      className="h-5 w-5"
+                                      aria-hidden="true"
+                                    />
+                                  ) : (
+                                    <PlusIcon
+                                      className="h-5 w-5"
+                                      aria-hidden="true"
+                                    />
+                                  )}
+                                </span>
+                              </Disclosure.Button>
+                            </h3>
+                            <Disclosure.Panel className="pt-6">
+                              <div className="space-y-6">
+                                {subject.map((option, optionIdx) => (
+                                  <div
+                                    key={option.value}
+                                    className="flex items-center"
+                                  >
+                                    <input
+                                      id={`filter-mobile-${section.id}-${optionIdx}`}
+                                      name={`${section.id}[]`}
+                                      defaultValue={option.subject}
+                                      type="checkbox"
+                                      defaultChecked={false}
+                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <label
+                                      htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
+                                      className="ml-3 min-w-0 flex-1 text-gray-500"
+                                    >
+                                      {option.subject}
+                                    </label>
+                                  </div>
+                                ))}
+                              </div>
+                            </Disclosure.Panel>
+                          </>
+                        )}
+                      </Disclosure>
+                    ))}
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </Dialog>
+        </Transition.Root>
+
+        <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-baseline justify-between border-b border-gray-200 pt-24 pb-6">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+              New Arrivals
+            </h1>
+
+            <div className="flex items-center">
+              <Menu as="div" className="relative inline-block text-left">
+                {/* <div>
+                  <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                    Sort
+                    <ChevronDownIcon
+                      className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                      aria-hidden="true"
+                    />
+                  </Menu.Button>
+                </div> */}
+
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  {/* <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="py-1">
+                      {sortOptions.map((option) => (
+                        <Menu.Item key={option.name}>
+                          {({ active }) => (
+                            <a
+                              href={option.href}
+                              className={classNames(
+                                option.current ? 'font-medium text-gray-900' : 'text-gray-500',
+                                active ? 'bg-gray-100' : '',
+                                'block px-4 py-2 text-sm'
+                              )}
+                            >
+                              {option.name}
+                            </a>
+                          )}
+                        </Menu.Item>
+                      ))}
+                    </div>
+                  </Menu.Items> */}
+                </Transition>
+              </Menu>
+
+              <button
+                type="button"
+                className="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7"
+              >
+                <span className="sr-only">View grid</span>
+                <Squares2X2Icon className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
+                onClick={() => setMobileFiltersOpen(true)}
+              >
+                <span className="sr-only">Filters</span>
+                <FunnelIcon className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+
+          <section aria-labelledby="products-heading" className="pt-6 pb-24">
+            <h2 id="products-heading" className="sr-only">
+              Products
+            </h2>
+
+            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4 border-r-2">
+              {/* Filters */}
+              <form className="hidden lg:block border-r-2">
+                <h3 className="sr-only">Categories</h3>
+                {/* <ul role="list" className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
+                  {subCategories.map((Class) => (
+                    <li key={Class.name}>
+                      <a href={Class.href}>{Class.name}</a>
+                    </li>
+                  ))}
+                </ul> */}
+
+                {filters.map((section) => (
+                  <>
+                    <Disclosure
+                      as="div"
+                      key={section.id}
+                      className="border-b border-gray-200 py-6"
+                    >
+                      {({ open }) => (
+                        <>
+                          <h3 className="-my-3 flow-root">
+                            <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                              <span className="font-medium text-gray-900">
+                                {section.name}
+                              </span>
+                              <span className="ml-6 flex items-center">
+                                {open ? (
+                                  <MinusIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                ) : (
+                                  <PlusIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                )}
+                              </span>
+                            </Disclosure.Button>
+                          </h3>
+                          <Disclosure.Panel className="pt-6">
+                            <div className="space-y-4">
+                              {section.options.map((option, optionIdx) => (
+                                <div
+                                  key={option.value}
+                                  className="flex items-center"
+                                >
+                                  <input
+                                    id={section.id}
+                                    name={`${section.id}[]`}
+                                    defaultValue={option.value}
+                                    type="checkbox"
+                                    defaultChecked={false}
+                                    onChange={handleCheckboxChange}
+                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                  />
+                                  <label
+                                    htmlFor={`filter-${section.id}-${optionIdx}`}
+                                    className="flex gap-2 ml-3 text-sm text-gray-600"
+                                  >
+                                  {option.label} {option.icon && <> {option.icon} Above </>}
+ 
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
+                          </Disclosure.Panel>
+                        </>
+                      )}
+                    </Disclosure>
+                   
+                  </>
+                ))}
+              </form>
+
+              {/* Product grid */}
+              <div className="lg:col-span-3">
+                <div className=" colo  grid gap-6 mt-10  text-center sm:grid-cols-2 m-8  md:grid-cols-3 ">
+                  {teachers.map((items, key) => (
+                    <Link to={`/teacher_details/${items._id}`}>
+                      <div className="max-w-sm  overflow-hidden shadow-lg m-10 ">
+                        <img
+                          className="w-full h-5/4"
+                          src={
+                            teachers.image
+                              ? teachers.image
+                              : "../../../avatar.png"
+                          }
+                          alt="Sunset in the mountains"
+                        />
+                        <div className="px-6 py-4">
+                          <div className="font-bold text-xl mb-2 text-center">
+                            {items.name}
+                          </div>
+                          <p className="text-gray-700 text-base">
+                            {items.qualification}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
       </div>
-    </>
+    </div>
   );
 }
+
+export default Booking;

@@ -12,9 +12,7 @@ const teacherSchema = new mongoose.Schema(
       required: [true, "Email is Required"],
       unique: true,
     },
-    state: {
-      type: String,
-    },
+  
     FEE: {
       type: Number,
     },

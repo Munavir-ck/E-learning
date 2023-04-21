@@ -194,11 +194,7 @@ const [modal,setmodal]=useState(false)
                     </a>
                   </div>
                 </div>
-       <button
-       onClick={()=>setmodal(true)}
        
-       
-       >modal</button >
        {modal&&<ModalSuccess  modal={modal} setModal={setmodal}/>}
                 <span className="absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white peer-checked:border-emerald-400"></span>
 

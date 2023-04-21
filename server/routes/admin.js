@@ -11,6 +11,7 @@ import { login,
     get_wallet,
     get_transactions,
     share_profit,
+    get_subject
  } from "../controller/admin.js";
 const router=express.Router()
 
@@ -23,4 +24,5 @@ router.post("/add_subject",add_subject)
 router.get("/get_wallet",get_wallet)
 router.get("/get_transction",get_transactions)
 router.post( "/share_profit",share_profit)
+router.get("/get_subject",get_subject)
 export default router

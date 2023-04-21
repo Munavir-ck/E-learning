@@ -316,7 +316,7 @@ function Booking_list() {
                             </button>
 						</div>
 					</div> */}
-              <button onClick={handleOnclick}>Click</button>
+              
             </div>
           </div>
         </div>

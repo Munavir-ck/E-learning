@@ -1,12 +1,29 @@
 import axios from "../../axios/axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 function AddTeachers() {
-  const initialValues = { email: "", name: "", qualification: "", subject: "",phone:"",FEE:"",state:""};
+  const initialValues = {
+    email: "",
+    name: "",
+    qualification: "",
+    class: "",
+    phone: "",
+    FEE: "",
+    subject: "",
+  };
   const [formValues, setFormValues] = useState(initialValues);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
+  const [subject, setSubject] = useState([]);
+
+  console.log(formValues);
+
+  useEffect(() => {
+    axios.get("/admin/get_subject", {}).then((res) => {
+      setSubject(res.data.result);
+    });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,25 +33,28 @@ function AddTeachers() {
         formValues,
       })
       .then((res) => {
-        if(res.data.status){
+        if (res.data.status) {
           toast.success("Success");
-         navigate("/admin/teachers")
+          navigate("/admin/teachers");
+        } else {
+          toast.error(res.data.message);
         }
-       else{
-        toast.error(res.data.message)
-       }
-       
       });
   };
 
   const handleChange = (e) => {
+    console.log(4545454545454);
+    console.log(e.target.value);
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
 
   return (
-    <form  className='h-screen overflow-y-auto  w-full  md:p-28' onSubmit={handleSubmit}>
-      < ToastContainer/>
+    <form
+      className="h-screen overflow-y-auto  w-full  md:p-28"
+      onSubmit={handleSubmit}
+    >
+      <ToastContainer />
       <div class="relative z-0 w-full mb-6 group">
         <input
           type="email"
@@ -68,13 +88,13 @@ function AddTeachers() {
           for="floating_password"
           class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >
-         Name
+          Name
         </label>
       </div>
       <div class="relative z-0 w-full mb-6 group">
         <input
           type="text"
-          name='qualification'
+          name="qualification"
           id="floating_repeat_password"
           class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
           placeholder=" "
@@ -109,21 +129,26 @@ function AddTeachers() {
           </label>
         </div>
         <div class="relative z-0 w-full mb-6 group">
-          <input
-            type="text"
-            name="state"
-            id="floating_last_name"
+          <select
+            name="subject"
+            id="subject"
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            placeholder=" "
             onChange={handleChange}
-            value={formValues.state}
+            value={formValues.subject}
             required
-          />
+          >
+            <option value="" disabled selected hidden>
+              Choose a category
+            </option>
+            {subject.map((item) => (
+              <option value={item.subject}>{item.subject}</option>
+            ))}
+          </select>
           <label
-            for="floating_last_name"
+            for="category"
             class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
-          State
+            Subject
           </label>
         </div>
       </div>
@@ -147,29 +172,34 @@ function AddTeachers() {
             Phone number (123-456-7890)
           </label>
         </div>
-        <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-state">
- Subject
+        <div class="relative z-0 w-full mb-6 group">
+  <select
+    name="class"
+    id="class"
+    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+    onChange={handleChange}
+    value={formValues.class}
+    required
+  >
+    <option value="" disabled selected hidden>
+      Choose a class
+    </option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+  </select>
+  <label
+    for="subject"
+    class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+  >
+    Class
   </label>
-  <div className="relative">
-    <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-     id="grid-state" 
-     name='subject'
-     onChange={handleChange}
-     value={formValues.subject}>
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
-      <option>6</option>
-      <option>7</option>
-    </select>
-    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-    </div>
-  </div>
 </div>
+
       </div>
       <button
         type="submit"
