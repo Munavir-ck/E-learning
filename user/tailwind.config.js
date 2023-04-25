@@ -6,6 +6,9 @@ module.exports = {
       height: {
         '500': '600px',
       },
+      height: {
+        '300': '300px',
+      },
       margin: {
         'custom-left': '20px', // adds a margin-left of 2rem
       },

@@ -3,8 +3,9 @@ import teacherDb from "../model/teacher.js";
 import jwt from "jsonwebtoken";
 import orderDb from "../model/order.js";
 import mongoose from "mongoose";
-import  messageDb from "../model/chat.js";
+import messageDb from "../model/chat.js";
 import studentDb from "../model/user.js";
+import Transaction from "../model/transaction.js";
 
 const googleAuthTutor = async (req, res) => {
   try {
@@ -133,6 +134,9 @@ const get_bookings = async (req, res) => {
       {
         $unwind: "$slot",
       },
+      {
+        $sort: { createdAt: -1 },
+      },
     ]);
 
     res.json({ status: true, result: data });
@@ -145,50 +149,44 @@ const get_bookings = async (req, res) => {
 const booking_actions = async (req, res) => {
   console.log(req.body);
   const { value, order_id, slot_id } = req.body;
-  const slotid = new mongoose.Types.ObjectId(slot_id)
-  
+  const slotid = new mongoose.Types.ObjectId(slot_id);
+
   if (value === "accept") {
     console.log(2323232323);
 
- 
     try {
-        const result = await orderDb.updateOne(
-            { _id: order_id, "slot._id": slotid  },
-            { $set: { "slot.$.booking_status": "success" } },
-            )
-       
-            res.json({ status: true });
+      const result = await orderDb.updateOne(
+        { _id: order_id, "slot._id": slotid },
+        { $set: { "slot.$.booking_status": "success" } }
+      );
+
+      res.json({ status: true });
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-   
-  
   } else if (value === "decline") {
-   
     const result = await orderDb.updateOne(
-        { _id: order_id, "slot._id": slotid  },
-        { $set: { "slot.$.booking_status": "failed" } },
-        )
-   
-        res.json({ status: true });
+      { _id: order_id, "slot._id": slotid },
+      { $set: { "slot.$.booking_status": "failed" } }
+    );
+
+    res.json({ status: true });
   }
 };
 
-
 const create_chat = async (req, res) => {
-  const { message, student} = req.body;
-  
-
+  const { message, student } = req.body;
 
   try {
-    await  messageDb.create({
-      sender: req.userId,
-      receiver:student,
-      message: message,
-    })
+    await messageDb
+      .create({
+        sender: req.userId,
+        receiver: student,
+        message: message,
+      })
       .then((data) => {
         console.log(data);
-        res.json({result:data})
+        res.json({ result: data });
       })
       .catch((err) => {
         console.log(err);
@@ -198,46 +196,131 @@ const create_chat = async (req, res) => {
   }
 };
 
-const get_messages=async(req,res)=>{
-  console.log(req.query,222)
+const get_messages = async (req, res) => {
+  console.log(req.query, 222);
 
-  const{student}=req.query
-  const teacher=req.userId
-
+  const { student } = req.query;
+  const teacher = req.userId;
 
   try {
-   const messageSend= await  messageDb.find({
-      sender:teacher,
-      receiver:student
-    })
+    const messageSend = await messageDb.find({
+      sender: teacher,
+      receiver: student,
+    });
 
-    const messageRecieved=await messageDb.find({
-      sender:student,
-      receiver:teacher,
-    })
+    const messageRecieved = await messageDb.find({
+      sender: student,
+      receiver: teacher,
+    });
 
-    const result=messageRecieved.concat(messageSend)
+    const result = messageRecieved.concat(messageSend);
 
-  
-    result.sort(function(a,b){
-      return a. createdAt - b. createdAt;
-    })
+    result.sort(function (a, b) {
+      return a.createdAt - b.createdAt;
+    });
 
-    
-    res.json({result: result})
-
+    res.json({ result: result });
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-const get_chat_reciever=async (req,res)=>{
- 
+const get_chat_reciever = async (req, res) => {
+  const { student } = req.query;
+  await studentDb.findById(student).then((data) => {
+    res.json({ result: data });
+  });
+};
 
-  const {student}=req.query
-  await studentDb.findById(student).then((data)=>{
-    res.json({result:data})
-  })
+const get_monthlylineChart = async (req, res) => {
+  try {
+    console.log(232322323);
+    const teacherId = req.userId;
+    console.log(teacherId);
+    const monthlyReport = await Transaction.aggregate([
+      {
+        $match: {
+          from: teacherId,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          totalProfit: { $sum: "$amount" },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.month": -1 } },
+    ]);
+
+    console.log(monthlyReport);
+    res.json(monthlyReport);
+  } catch (err) {}
+};
+
+const dailyReport = async (req, res) => {
+  try {
+
+    const teacherId = req.userId;
+
+    console.log(teacherId);
+
+    let today = new Date();
+    let startDate = new Date(today.setUTCHours(0, 0, 0, 0));
+    let endDate = new Date(today.setUTCHours(23, 59, 59, 999));
+    const objectId = new mongoose.Types.ObjectId(teacherId);
+    const todayBooking = await orderDb.aggregate([
+      {
+        $match: {
+          teacher: objectId,
+          createdAt: { $lt: endDate, $gt: startDate },
+        },
+      },
+      {
+        $group: {
+          _id: "",
+
+          todayTotal: { $sum: "$amount" },
+          slots: { $sum: { $size: "$slot" } },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+    ]);
+
+    console.log(todayBooking, "ajdsnj");
+    if (todayBooking.length !== 0) {
+      const totalAmount =todayBooking[0].todayTotal;
+      const totalOrder =todayBooking[0].count;
+      const totalSlot = todayBooking[0].slots;
+
+      res.json({ status: true, totalAmount, totalOrder, totalSlot });
+    } else {
+      res.json({ status: true, totalAmount: 0, totalOrder: 0, totalSlot: 0 });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const get_wallet=async(req,res)=>{
+  console.log(req.userId);
+  const ID=req.userId
+await teacherDb.findOne({_id:ID}).then((data)=>{
+  console.log(data);
+  const wallet=data.wallet
+  res.json({wallet})
+})
+
+
+
 }
 
 export {
@@ -251,4 +334,7 @@ export {
   create_chat,
   get_messages,
   get_chat_reciever,
+  get_monthlylineChart,
+  dailyReport,
+  get_wallet,
 };

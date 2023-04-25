@@ -1,10 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import { ImArrowRight } from "react-icons/im";
+import { BsFillWalletFill } from "react-icons/bs";
+import axios from "../../axios/axios";
+
 export default function Sidebar() {
+
+    const[wallet,setWallet]=useState("")
     // const [open, setOpen] = useState(false);
     const studentName = useSelector(state => state.tutor.name);
+
+
+    useEffect(()=>{
+  axios.get("/tutor/get_wallet",{
+    headers: {
+      Authorization: localStorage.getItem("tutortoken"),
+    },
+  }).then((res)=>{
+    setWallet(res.data.wallet)
+  })
+    },[])
     return (
         <div className="flex">
             <div  className= "w-60 flex flex-col h-screen p-3 bg-cyan-700 shadow duration-300">
@@ -17,38 +33,12 @@ export default function Sidebar() {
                         <h2 className="text-xl font-bold text-white">
                            {studentName}
                         </h2>
-                        {/* <button onClick={() => setOpen(!open)}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-6 h-6 text-white"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M4 6h16M4 12h8m-8 6h16"
-                                />
-                            </svg>
-                        </button> */}
+                       
                     </div>
                     <div className="relative">
-                        <span className="absolute inset-y-0 left-0 flex items-center py-4">
-                            <button
-                                type="submit"
-                                className="p-2 focus:outline-none focus:ring"
-                            >
-                              < ImArrowRight/>
-                            </button>
-                        </span>
-                        <input
-                            type="search"
-                            name="Search"
-                            placeholder="Search..."
-                            className="w-full py-2 pl-10 text-sm rounded-md focus:outline-none"
-                        />
+                    <div className="flex relative">
+                       <BsFillWalletFill size={30} color="white"/>  <span className="font-bold text-white mx-5 ">${wallet}</span>
+                    </div>
                     </div>
                     <div className="flex-1">
                         <ul className="pt-2 pb-4 space-y-1 text-sm">
@@ -58,7 +48,9 @@ export default function Sidebar() {
                                     className="flex items-center p-2 space-x-3 rounded-md"
                                 >
                                   < ImArrowRight/>
+                                  <Link to={"/tutor/home"}>
                                     <span className="text-gray-100">Home</span>
+                                    </Link>
                                 </a>
                             </li>
                             <li className="rounded-sm">
@@ -68,7 +60,7 @@ export default function Sidebar() {
                                 >
                                    < ImArrowRight/>
                                     <Link to={"/tutor/profile"}>
-                                    <span className="text-gray-100">PROFILE</span>
+                                    <span className="text-gray-100">Profile</span>
                                     </Link>
                                 </a>
                             </li>
@@ -93,7 +85,7 @@ export default function Sidebar() {
                                 >
                                    < ImArrowRight/>
                                     <span className="text-gray-100">
-                                        Settings
+                                        Bookings
                                     </span>
                                 </a>
                                 </Link>

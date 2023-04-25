@@ -1,6 +1,6 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
-import { Chart } from 'chart.js/auto'
+import  Chart from 'chart.js/auto'
 import { useEffect } from 'react';
 
 

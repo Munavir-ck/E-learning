@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import axios from "../../axios/axios";
+import axios from "../../../axios/axios"
 
-function AdminData() {
+function DayReport() {
 
-    const[todayTotal,setTodayTotal]=useState(null)
-    const[todaySlots,setTodaySlot]=useState(null)
-    const[booking,setBooking]=useState(null)
+    const[todayTotal,setTodayTotal]=useState(20)
+    const[todaySlots,setTodaySlot]=useState(499)
+    const[booking,setBooking]=useState(599)
 
 
 useEffect(()=>{
 
-    axios.get( "/admin/get_dailyReport").then((res)=>{
+    axios.get( "/tutor/get_dailyReport",{
+        headers: {
+          Authorization: localStorage.getItem("tutortoken"),
+        },
+      }).then((res)=>{
         console.log(res.data);
         setTodayTotal(res.data.totalAmount)
         setTodaySlot(res.data.totalSlot)
@@ -59,4 +63,4 @@ useEffect(()=>{
   )
 }
 
-export default AdminData
+export default  DayReport

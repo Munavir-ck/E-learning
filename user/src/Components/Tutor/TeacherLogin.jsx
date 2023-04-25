@@ -14,17 +14,17 @@ function TeacherLogin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const googleAuth = async (datas) => {
-    console.log(datas, "this is the data 222");
+   
     setUser(datas);
-    console.log(user, "this is user here");
+   
 
     await axios.post("/googleAuth", { datas }).then((res) => {
-      console.log(2222222222222222222);
+    
       if (res.data.status) {
-        console.log(res.data, 111111111);
+      
         toast.success(res.data.message);
         localStorage.setItem("tutortoken", res.data.token);
-        console.log(res.data.token, "this is the token data4444");
+       
         dispatch(
           setTutor({
             name: res.data.tutor.name,

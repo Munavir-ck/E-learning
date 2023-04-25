@@ -95,7 +95,7 @@ function Transactions() {
                   {" "}
                   {moment(item.createdAt).format("MMMM Do YYYY")}
                 </td>
-                <td className="px-6 py-4"> {item.teacher._id}</td>
+                <td className="px-6 py-4"> {item.teacher.FEE}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center">
                     <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div>{" "}

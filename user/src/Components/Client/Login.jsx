@@ -59,7 +59,7 @@ function Login() {
         })
         .then((res) => {
           if (res.data.status) {
-            console.log("tokenffffffffff");
+           
             setSubmit(true);
             toast.success(res.data.message);
             localStorage.setItem("token", res.data.token);

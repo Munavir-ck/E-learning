@@ -1,25 +1,32 @@
 import Sidebar from "../../Components/Admin/Sidebar";
 import Linechart from "../../Components/Admin/Linechart";
 import AdminData from "../../Components/Admin/AdminData";
-// import Chart from  "../../Components/Admin/Chart/Chart"
+import LineChart from "../../Components/Admin/Chart/LineChart";
 import { Fragment } from "react";
+import PieChart from "../../Components/Admin/Chart/PieChart";
 
-import React from 'react'
+import React from "react";
 
 function AdminHome() {
   return (
-    <Fragment>
-    <div className="flex ">
-      <Sidebar/>
-      <div className="flex-col w-full h-500">
-      <AdminData/>
-      <div className="">
-      <Linechart/>
-      </div>
+    <div className="flex w-full ">
+      <div className="flex  w-full ">
+        <Sidebar />
+        <div className="flex flex-col w-full overflow-y-auto h-screen">
+          <AdminData />
+          <div className=" flex flex-col md:flex-row md:justify-between ">
+            <div className="w-full md:w-1/2">
+              <LineChart />
+            </div>
+            <div className="w-full md:w-1/2">
+              <PieChart />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    </Fragment>
-  )
+  );
 }
 
-export default AdminHome
+export default AdminHome;
+

@@ -129,7 +129,7 @@ console.log(totalSatrs);
                   })}
 
                   <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {teacher.rating} out of 5
+                    {Math.round(teacher.rating)} out of 5
                   </p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ console.log(totalSatrs);
                           alt=""
                         />
                         <h4 className="w-full md:w-auto text-xl font-heading font-medium">
-                          Faustina H. Fawn
+                         {item.student.name}
                         </h4>
                         <div className="w-full md:w-px h-2 md:h-8 mx-8 bg-transparent md:bg-gray-200"></div>
                         <span className="mr-4 text-xl font-heading font-medium">

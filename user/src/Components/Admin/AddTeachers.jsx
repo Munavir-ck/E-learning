@@ -54,7 +54,7 @@ function AddTeachers() {
       className="h-screen overflow-y-auto  w-full  md:p-28"
       onSubmit={handleSubmit}
     >
-      <ToastContainer />
+    
       <div class="relative z-0 w-full mb-6 group">
         <input
           type="email"
@@ -207,6 +207,7 @@ function AddTeachers() {
       >
         Submit
       </button>
+      <ToastContainer />
     </form>
   );
 }

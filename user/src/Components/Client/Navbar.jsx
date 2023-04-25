@@ -36,7 +36,7 @@ export default function N() {
     dispatch(resetStudent());
     navigate("/")
   }
-  console.log( studentName );
+
   return (
     <Disclosure as="nav" className="bg-mycolors_b">
       {({ open }) => (
@@ -97,7 +97,7 @@ export default function N() {
               
 
                 {/* Profile dropdown */}
-                {studentName&&<Menu as="div" className="relative ml-3">
+                {studentName?<Menu as="div" className="relative ml-3">
                   <div>
 
                     <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -156,7 +156,11 @@ export default function N() {
                       </Menu.Item>
                     </Menu.Items>}
                   </Transition>
-                </Menu>}
+                </Menu>:
+                 <Link to={"/login"}>
+                <button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Login</button>
+                </Link>
+                }
                 
               </div>
             </div>

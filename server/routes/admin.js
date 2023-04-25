@@ -11,7 +11,10 @@ import { login,
     get_wallet,
     get_transactions,
     share_profit,
-    get_subject
+    get_subject,
+    monthlylineChart,
+    dailyReport,
+    pieChart,
  } from "../controller/admin.js";
 const router=express.Router()
 
@@ -25,4 +28,7 @@ router.get("/get_wallet",get_wallet)
 router.get("/get_transction",get_transactions)
 router.post( "/share_profit",share_profit)
 router.get("/get_subject",get_subject)
+router.get("/get_monthlylineChart",monthlylineChart)
+router.get( "/get_dailyReport",dailyReport)
+router.get("/get_piechart",pieChart)
 export default router

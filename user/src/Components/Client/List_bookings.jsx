@@ -22,7 +22,6 @@ const List_bookings = () => {
   const [bookings, setBookings] = useState([]);
   const navigate = useNavigate();
 
-
   console.log(bookings);
 
   const email = useSelector((state) => state.student.email);
@@ -53,7 +52,6 @@ const List_bookings = () => {
   }, [socket]);
 
   const handleOnclick = (teacherId) => {
-
     console.log(teacherId);
     socket.emit("room:join", { email, room });
     dispatch(
@@ -109,7 +107,6 @@ const List_bookings = () => {
     };
   });
 
-  
   const now = new Date();
 
   const currentTime = new Date(now.getTime());
@@ -130,7 +127,7 @@ const List_bookings = () => {
     future_minutes.toString().padStart(2, "0");
   console.log(future_time, "future");
   useEffect(() => {
-    console.log(344343434343443);
+    
     axios
       .get("/get_bookings", {
         headers: {
@@ -223,7 +220,7 @@ const List_bookings = () => {
                 </span>
               </span>
             </div>
-            {bookings.map((item) => (
+            {bookings&&bookings.map((item) => (
               <div className="hover:bg-mycolors cursor-pointer bg-white shadow flex p-5 items-center mb-5 rounded-lg">
                 <div className="w-1/6 text-center">
                   <input type="checkbox" v-model="contact.selected" />
@@ -233,7 +230,7 @@ const List_bookings = () => {
                     <img
                       className="rounded-full w-14"
                       src={
-                        item.teacher[0].image
+                        item.teacher
                           ? item.teacher[0].image
                           : "../../../avatar.png"
                       }

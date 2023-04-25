@@ -28,44 +28,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { BsFillChatFill } from "react-icons/bs";
 
-// const sortOptions = [
-//   { name: 'Most Popular', href: '#', current: true },
-//   { name: 'Best Rating', href: '#', current: false },
-//   { name: 'Newest', href: '#', current: false },
-//   { name: 'Price: Low to High', href: '#', current: false },
-//   { name: 'Price: High to Low', href: '#', current: false },
-// ]
-// const subCategories = [
-//   { name: 'Totes', href: '#' },
-//   { name: 'Backpacks', href: '#' },
-//   { name: 'Travel Bags', href: '#' },
-//   { name: 'Hip Bags', href: '#' },
-//   { name: 'Laptop Sleeves', href: '#' },
-// ]
 
-//   {
-//     id: 'Class',
-//     name: 'Class',
-//     options: [
-//       { value: 'class-1', label: 'class-1', checked: false },
-//       { value: 'class-2', label: 'class-2', checked: false },
-//       { value: 'class-3', label: 'class-3', checked: true },
-//       { value: 'class-4', label: 'class-4', checked: false },
-//       { value: 'class-5', label: 'class-5', checked: false },
-//     ],
-//   },
-// //   {
-//     id: 'size',
-//     name: 'Size',
-//     options: [
-//       { value: '2l', label: '2L', checked: false },
-//       { value: '6l', label: '6L', checked: false },
-//       { value: '12l', label: '12L', checked: false },
-//       { value: '18l', label: '18L', checked: false },
-//       { value: '20l', label: '20L', checked: false },
-//       { value: '40l', label: '40L', checked: true },
-//     ],
-//   },
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");

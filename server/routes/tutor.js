@@ -10,6 +10,9 @@ import { get_profile
     create_chat,
     get_messages,
     get_chat_reciever,
+    get_monthlylineChart,
+    dailyReport,
+    get_wallet,
 } from "../controller/tutor.js";
 const router=express.Router()
 
@@ -22,7 +25,9 @@ router.post("/booking_actions",verifyuserJWT,booking_actions)
 router.post( "/create_chat",verifyuserJWT,create_chat)
 router.get("/get_messages", verifyuserJWT,get_messages)
 router.get("/get_chat_reciever",verifyuserJWT,get_chat_reciever)
-
+router.get("/get_monthlylineChart",verifyuserJWT,get_monthlylineChart)
+router.get( "/get_dailyReport",verifyuserJWT,dailyReport)
+router.get("/get_wallet",verifyuserJWT,get_wallet)
 
 
 export default router

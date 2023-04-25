@@ -47,8 +47,8 @@ function ShareProfit({ modal, setModal,teacher, transaction_id }) {
                 <p class="text-3xl font-semibold text-green-500">{teacher.FEE}</p>
               </div>
               <div class="flex flex-col items-center">
-                <p class="text-lg font-semibold">ADMIN PRFIT:</p>
-                <p class="text-3xl font-semibold text-red-500">{adminProfit}</p>
+                <p class="text-lg font-semibold">Teacher Name:</p>
+                <p class="text-3xl font-semibold text-red-500">{teacher.name}</p>
               </div>
             </div>
             <div class=" md:p-10 py-2 px-4">

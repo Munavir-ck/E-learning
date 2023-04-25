@@ -252,7 +252,7 @@ const [modal,setmodal]=useState(false)
                 {(filterdSlot.length !== 0 ? filterdSlot : slot).map(
                   (item, i) => (
                     <div>
-                      <div class="flex items-center mb-4 gap-2 border-2 bg-mycolors hover:bg-mycolors_b ">
+                      <div class={`flex items-center mb-4 gap-2 border-2 bg-mycolors hover:bg-mycolors_b ${item.booking_status==="Success"&&"hidden"} `}>
                         <input
                           defaultChecked={false}
                           onChange={handleCheckboxChange}
@@ -261,13 +261,13 @@ const [modal,setmodal]=useState(false)
                           value={item._id}
                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 ml-2 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         />
-
+                   
                         <button
                           onClick={() => {
                             openModal();
                             setSelectedData(item);
                           }}
-                          className="rounded-lg px-4 py-2 font-mediumactive:scale-95  hover:bg-mycolors_b text-white"
+                          className={`rounded-lg px-4 py-2 font-mediumactive:scale-95  hover:bg-mycolors_b text-white`}
                         >
                           Slot-{i + 1}
                         </button>

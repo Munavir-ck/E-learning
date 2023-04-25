@@ -406,11 +406,13 @@ const creat_booking = async (req, res) => {
     const filteredResult = result.slot.filter((obj) => {
       return slotId.includes(obj._id.toString());
     });
+    const count=filteredResult.length
+    const totalAmount=amount*count
     await orderDb
       .create({
         student,
         slot: filteredResult,
-        amount,
+        amount:totalAmount,
         teacher,
         order_id,
       })
@@ -483,7 +485,11 @@ const get_bookings = async (req, res) => {
       {
         $unwind: "$slot",
       },
+      {
+        $sort: { createdAt: -1 },
+      },
     ]);
+    
 
     res.json({ status: true, result: data });
   } catch (error) {
@@ -675,7 +681,7 @@ const filter_our_teacher = async (req, res) => {
               { subject: { $in: subjectArr } },
               { class: { $in: classesArr } },
               { rating: { $in: ratingArr } },
-              { rating: { $gt: maxRating },}
+              // { rating: { $gt: maxRating },}
             ],
            
           },
@@ -683,25 +689,14 @@ const filter_our_teacher = async (req, res) => {
       ])
       .then((data) => {
         console.log(data, 66666);
-        res.json({ result: data });
+        res.json({status:true, result: data });
       });
   }
 
-  console.log(ratingArr, "rating");
-  console.log(subjectArr, 2323232323232);
-  console.log(classesArr, 2323232323232);
+ 
 
-  // console.log(rating);
 
-  //    if(checkedValues.id==='rating'){
-  //       console.log('rating');
-  //    }
-  //    else if(checkedValues.id==='class'){
-  //    console.log('class');
-  //    }
-  //    else if(checkedValues.id==='subject'){
-  //   console.log('subject');
-  //    }
+ 
 };
 
 export {

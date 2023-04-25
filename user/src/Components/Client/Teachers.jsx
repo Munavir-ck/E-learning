@@ -15,6 +15,7 @@ import {
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { BsFillChatFill } from "react-icons/bs";
+import SearchTeacher from "./Search/SearchTeacher";
 
 
 
@@ -29,7 +30,7 @@ function Booking() {
   const [subject, setSubject] = useState([]);
   const student_id = useSelector((state) => state.student._id);
 
-  
+  console.log(teachers,'iam teachers');
 
   const handleChange = (e) => {
     setSubject(e.target.value);
@@ -58,8 +59,9 @@ function Booking() {
        
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.status) {
+          console.log(res.data.result,'filtersed teacher');
           setTeachers(res.data.result);
         } else {
           setTeachers([]);
@@ -87,7 +89,7 @@ function Booking() {
       .catch((error) => {
         console.error(error);
       });
-  }, [checkedValues]);
+  }, []);
 
   useEffect(() => {
  
@@ -150,6 +152,7 @@ const stars=[1,2,3,4,5]
 
   return (
     <div className="bg-white">
+      <SearchTeacher  setData={setTeachers} />
       <div>
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -275,7 +278,7 @@ const stars=[1,2,3,4,5]
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between border-b border-gray-200 pt-24 pb-6">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-              New Arrivals
+              {/* New Arrivals */}
             </h1>
 
             <div className="flex items-center">

@@ -1,26 +1,19 @@
-import React from 'react'
+import React from "react";
 import { Fragment } from "react";
-import Sidebar from "../../Components/Admin/Sidebar"
-import Transactions from '../../Components/Admin/Transactions';
+import Sidebar from "../../Components/Admin/Sidebar";
+import Transactions from "../../Components/Admin/Transactions";
 
 function Transaction_page() {
   return (
-    <div className='overflow-hidden'>
-    <div className="flex ">
-   <Sidebar/>
-   <div className=" w-full ">
-   <Transactions/>
-
-   </div>
- </div>
-
-  </div>
-  )
+    <div className="overflow-hidden">
+      <div className="flex ">
+        <Sidebar />
+        <div className=" w-full ">
+          <Transactions />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default Transaction_page
-
-
-
-
-
+export default Transaction_page;
