@@ -264,13 +264,17 @@ const get_monthlylineChart = async (req, res) => {
 const dailyReport = async (req, res) => {
   try {
 
+   const {selectedDate}=req.query
+
+
+
     const teacherId = req.userId;
 
-    console.log(teacherId);
+   
 
-    let today = new Date();
-    let startDate = new Date(today.setUTCHours(0, 0, 0, 0));
-    let endDate = new Date(today.setUTCHours(23, 59, 59, 999));
+    let date = new Date(selectedDate);
+    let startDate = new Date(date.setUTCHours(0, 0, 0, 0));
+    let endDate = new Date(date.setUTCHours(23, 59, 59, 999));
     const objectId = new mongoose.Types.ObjectId(teacherId);
     const todayBooking = await orderDb.aggregate([
       {

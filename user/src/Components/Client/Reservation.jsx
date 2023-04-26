@@ -7,54 +7,37 @@ import "tailwindcss/tailwind.css";
 import Modal from "react-modal";
 import Paypal from "./Paypal/Paypal";
 import { useSelector } from "react-redux";
-import 'react-toastify/dist/ReactToastify.css';
-import {ToastContainer,toast} from "react-toastify"
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 import ModalSuccess from "./Modal/ModalSuccess";
 
 function Reservation() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [teacher, setTeacher] = useState("");
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [slot, setSlot] = useState([]);
   const [selectedData, setSelectedData] = useState({});
   const [filterdSlot, setFiltersSlot] = useState([]);
   const [checkedValues, setCheckedValues] = useState([]);
   const [submit, setSubmit] = useState(false);
- 
 
-const [modal,setmodal]=useState(false)
+  console.log(filterdSlot, "dateeeeeeeeeeeee");
+
+  const [modal, setmodal] = useState(false);
 
   console.log(checkedValues);
 
- console.log(filterdSlot,444);
+  console.log(filterdSlot, 444);
 
-  
   let { id } = useParams();
-  
-//    const  orderSuccess=()=>{
-       
-//      axios.post( "/order_success",{id,order,slot:checkedValues} , {
-//         headers: {
-//           Authorization: localStorage.getItem("token"),
-//         },
-//       }).then((res)=>{
-//         setSubmit(false)
-//       })
-//    }
-  
 
- 
-
-
-
-  const handleSubmit=()=>{
-  if(checkedValues.length!==0){
-    setSubmit(true)
-
-  }else{
-    toast.error( "select a slot ")
-   }
-  }
+  const handleSubmit = () => {
+    if (checkedValues.length !== 0) {
+      setSubmit(true);
+    } else {
+      toast.error("select a slot ");
+    }
+  };
 
   const handleCheckboxChange = (e) => {
     const value = e.target.value;
@@ -67,8 +50,6 @@ const [modal,setmodal]=useState(false)
       setCheckedValues(checkedValues.filter((val) => val !== value));
     }
   };
-
-
 
   // const amount = 50;
 
@@ -107,56 +88,45 @@ const [modal,setmodal]=useState(false)
         setTeacher(res.data.result);
       })
       .catch((err) => {});
-
-    axios
-      .get("/get_slot", {
-        params: {
-          id,
-        },
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      })
-      .then((res) => {
-        setSlot(res.data.result);
-      })
-      .catch((err) => {});
   }, []);
 
   useEffect(() => {
-    axios
-      .post(
-        "/filter_slot",
-        {
-          id,
-          selectedDate,
-        },
-        {
-          headers: {
-            Authorization: localStorage.getItem("token"),
+    const date = new Date();
+    let currentDate = new Date(date.setUTCHours(0, 0, 0, 0));
+    if (selectedDate >= currentDate) {
+      axios
+        .post(
+          "/filter_slot",
+          {
+            id,
+            selectedDate,
           },
-        }
-      )
-      .then((res) => {
-        if (res.data.status) {
-         
-          console.log(res.data.result.slot, 55);
-          setFiltersSlot(res.data.result.slot);
-        }
-        else{
-            setFiltersSlot(["null"]); 
-        }
-      })
-      .catch((err) => {});
-  }, [selectedDate]);
+          {
+            headers: {
+              Authorization: localStorage.getItem("token"),
+            },
+          }
+        )
+        .then((res) => {
+          if (res.data.status) {
+            console.log(res.data);
 
-  
+            setFiltersSlot(res.data.result[0].slots);
+          } else {
+            setFiltersSlot([]);
+          }
+        })
+        .catch((err) => {});
+    } else {
+      toast.error("error");
+    }
+  }, [selectedDate]);
 
   return (
     <div>
       <div className="flex">
         <div className="w-screen">
-            <ToastContainer/>
+          <ToastContainer />
           <div className="relative mx-auto mt-20 mb-20 max-w-screen-lg overflow-hidden rounded-t-xl bg-mycolors py-32 text-center shadow-xl shadow-gray-300">
             <h1 className="mt-2 px-8 text-3xl font-bold text-white md:text-5xl">
               Book an appointment
@@ -194,8 +164,8 @@ const [modal,setmodal]=useState(false)
                     </a>
                   </div>
                 </div>
-       
-       {modal&&<ModalSuccess  modal={modal} setModal={setmodal}/>}
+
+                {modal && <ModalSuccess modal={modal} setModal={setmodal} />}
                 <span className="absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white peer-checked:border-emerald-400"></span>
 
                 <label
@@ -239,6 +209,7 @@ const [modal,setmodal]=useState(false)
                   selected={selectedDate}
                   onChange={(date) => setSelectedDate(date)}
                   dateFormat="dd/MM/yyyy"
+                  minDate={new Date()}
                   className="w-full text-gray-700 py-2 px-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-indigo-500"
                 />
               </div>
@@ -249,10 +220,14 @@ const [modal,setmodal]=useState(false)
                 Select a time
               </p>
               <div className="mt-4 grid grid-cols-4 gap-2 lg:max-w-xl">
-                {(filterdSlot.length !== 0 ? filterdSlot : slot).map(
-                  (item, i) => (
+                {filterdSlot.length !== 0 &&
+                  filterdSlot.map((item, i) => (
                     <div>
-                      <div class={`flex items-center mb-4 gap-2 border-2 bg-mycolors hover:bg-mycolors_b ${item.booking_status==="Success"&&"hidden"} `}>
+                      <div
+                        class={`flex items-center mb-4 gap-2 border-2 bg-mycolors hover:bg-mycolors_b ${
+                          item.booking_status === "Success" && "hidden"
+                        } `}
+                      >
                         <input
                           defaultChecked={false}
                           onChange={handleCheckboxChange}
@@ -261,7 +236,7 @@ const [modal,setmodal]=useState(false)
                           value={item._id}
                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 ml-2 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         />
-                   
+
                         <button
                           onClick={() => {
                             openModal();
@@ -273,8 +248,7 @@ const [modal,setmodal]=useState(false)
                         </button>
                       </div>
                     </div>
-                  )
-                )}
+                  ))}
               </div>
             </div>
 
@@ -285,10 +259,10 @@ const [modal,setmodal]=useState(false)
               Book Now
             </button>
             <div className="w-80 mt-10">
-            {submit && 
-             <Paypal amount={teacher.FEE} checkedValues={checkedValues}/>
-             }
-             </div>
+              {submit && (
+                <Paypal amount={teacher.FEE} checkedValues={checkedValues} />
+              )}
+            </div>
           </div>
         </div>
         <script src="https://unpkg.com/flowbite@1.5.2/dist/datepicker.js"></script>

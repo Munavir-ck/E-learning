@@ -2,21 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
 import axios from "../../../axios/axios";
 
-const LineChart = () => {
+const LineChart = ({totalBooking,bookingProfit,bookingCount,months}) => {
   const chartRef = useRef(null);
-  const [totalBooking, setTotalBooking] = useState([]);
-  const [bookingProfit, setBookingProfit] = useState([]);
-  const [bookingCount, setBookingCount] = useState([]);
-  const [months, setMonths] = useState([]);
+  
 
-  useEffect(() => {
-    axios.get("/admin/get_monthlylineChart").then((res) => {
-      setTotalBooking(res.data.totalBooking);
-      setBookingProfit(res.data.bookingProfit);
-      setBookingCount(res.data.bookingCount);
-      setMonths(res.data.months);
-    });
-  }, []);
+  console.log(totalBooking,"bookingCount");
 
   useEffect(() => {
     const chartInstance = new Chart(chartRef.current, {

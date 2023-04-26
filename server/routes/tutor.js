@@ -26,7 +26,7 @@ router.post( "/create_chat",verifyuserJWT,create_chat)
 router.get("/get_messages", verifyuserJWT,get_messages)
 router.get("/get_chat_reciever",verifyuserJWT,get_chat_reciever)
 router.get("/get_monthlylineChart",verifyuserJWT,get_monthlylineChart)
-router.get( "/get_dailyReport",verifyuserJWT,dailyReport)
+router.get( "/get_report",verifyuserJWT,dailyReport)
 router.get("/get_wallet",verifyuserJWT,get_wallet)
 
 

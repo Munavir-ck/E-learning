@@ -9,6 +9,11 @@ function Paypal({amount,checkedValues}) {
     const[order,setOrder]=useState('')
     const [modal,setmodal]=useState(false)
 
+    const totalAmount=checkedValues.length*amount
+
+
+    console.log(totalAmount,"totl amount");
+
     const student = useSelector((state) => state.student._id);
     let { id } = useParams();
 
@@ -51,7 +56,7 @@ function Paypal({amount,checkedValues}) {
                         purchase_units: [
                           {
                             amount: {
-                              value: amount,
+                              value: totalAmount,
                             },
                           },
                         ],

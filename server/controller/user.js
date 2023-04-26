@@ -345,32 +345,44 @@ const reservation_page = async (req, res) => {
 
 const filter_slot = async (req, res) => {
   try {
-    const teacherID = req.body.id;
+    const teacherID = new mongoose.Types.ObjectId(req.body.id);;
     const dateTostring = req.body.selectedDate;
+ 
+    console.log(dateTostring);
     if (dateTostring) {
       const date = new Date(dateTostring);
-
+     
       const utcDate = new Date(
         Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
       );
 
-      await teacherDb
-        .findOne(
-          { _id: teacherID, "slot.date": utcDate },
-          { "slot.$": 1, _id: 0 }
-        )
-        .then((data) => {
-          if (data === null) {
-            res.json({ status: false });
-          } else {
-            res.json({ status: true, result: data });
+
+
+     
+
+      const data = await teacherDb.aggregate([
+        { $match: { _id: teacherID, "slot.date": utcDate } },
+        { $project: {
+          slots: {
+            $filter: {
+              input: "$slot",
+              as: "s",
+              cond: { $eq: ["$$s.date", utcDate] }
+            }
           }
-        })
-        .catch((error) => {
-          console.log(error);
-          res.json({ status: false });
-        });
+        }}
+      ])
+      
+      if(data.length===0){
+     res.json({ status: false})
+      }else{
+
+        res.json({ status: true, result: data });
+       console.log(data);
+      }
+
     }
+
   } catch (error) {
     console.log(error);
   }
