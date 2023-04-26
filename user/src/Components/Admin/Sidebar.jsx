@@ -4,15 +4,17 @@ import {Link} from "react-router-dom";
 import { ImArrowRight } from "react-icons/im";
 import { BsFillWalletFill } from "react-icons/bs";
 import axios from "../../axios/axios"
+import { useNavigate } from "react-router-dom";
 
 
 export default function Sidebar() {
 
     const[wallet,setWallet]=useState("")
+     const navigate= useNavigate()
 
 useEffect(()=>{
    axios.get("/admin/get_wallet", {
-    headers: { adminToken: localStorage.getItem("admintoken") },
+    headers: { Authorization: localStorage.getItem("admintoken") },
   }).then((res)=>{
     const amount=res.data.result.balance
     console.log(amount);
@@ -21,6 +23,11 @@ useEffect(()=>{
 
 
 },[])
+
+const handleLogout=()=>{
+    localStorage.removeItem("admintoken")
+    navigate("/admin/login")
+}
 
     return (
         <div className="flex">
@@ -134,7 +141,9 @@ useEffect(()=>{
                                             d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
                                         />
                                     </svg>
-                                    <span className="text-gray-100">Logout</span>
+                                    <span 
+                                    onClick={handleLogout}
+                                    className="text-gray-100">Logout</span>
                                 </a>
                             </li>
                         </ul>

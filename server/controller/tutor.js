@@ -159,6 +159,7 @@ const booking_actions = async (req, res) => {
         { _id: order_id, "slot._id": slotid },
         { $set: { "slot.$.booking_status": "success" } }
       );
+     
 
       res.json({ status: true });
     } catch (error) {
@@ -168,6 +169,11 @@ const booking_actions = async (req, res) => {
     const result = await orderDb.updateOne(
       { _id: order_id, "slot._id": slotid },
       { $set: { "slot.$.booking_status": "failed" } }
+    );
+
+    await teacherDb.updateOne(
+      {  "slot._id":  slotid },
+      { $set: { "slot.$.booking_status": "boocked" } }
     );
 
     res.json({ status: true });
@@ -197,7 +203,7 @@ const create_chat = async (req, res) => {
 };
 
 const get_messages = async (req, res) => {
-  console.log(req.query, 222);
+
 
   const { student } = req.query;
   const teacher = req.userId;
@@ -237,10 +243,11 @@ const get_monthlylineChart = async (req, res) => {
     console.log(232322323);
     const teacherId = req.userId;
     console.log(teacherId);
+    const teacher_id=new mongoose.Types.ObjectId(teacherId)
     const monthlyReport = await Transaction.aggregate([
       {
         $match: {
-          from: teacherId,
+          teacher: teacherId,
         },
       },
       {
@@ -255,9 +262,9 @@ const get_monthlylineChart = async (req, res) => {
       },
       { $sort: { "_id.month": -1 } },
     ]);
-
+  console.log( "_id.month");
     console.log(monthlyReport);
-    res.json(monthlyReport);
+    res.json({result:monthlyReport});
   } catch (err) {}
 };
 
@@ -318,7 +325,7 @@ const get_wallet=async(req,res)=>{
   console.log(req.userId);
   const ID=req.userId
 await teacherDb.findOne({_id:ID}).then((data)=>{
-  console.log(data);
+ 
   const wallet=data.wallet
   res.json({wallet})
 })

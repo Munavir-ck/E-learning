@@ -63,15 +63,18 @@ function Booking_list() {
   
 
   const handleOnclick = (studentId) => {
-    const room = Math.floor(Math.random() * 100 + 1);
-    console.log(2222);
-    dispatch(
-      setRoom({
-        room: room,
-      })
-    );
 
-    socket.emit("room:join", { email, room });
+
+
+    const room = studentId
+    console.log(room,2222);
+    // dispatch(
+    //   setRoom({
+    //     room: room,
+    //   })
+    // );
+
+    socket.emit("room:join", { email,room });
     socket.emit("display-notification", { studentId }, studentId);
   };
 

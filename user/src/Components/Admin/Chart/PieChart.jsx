@@ -7,7 +7,9 @@ const PieChart = () => {
   const [pieChartData, setPiechartData] = useState([]);
 
   useEffect(()=>{
-    axios.get("/admin/get_piechart").then((res) => {
+    axios.get("/admin/get_piechart",{ headers: {
+        Authorization: localStorage.getItem("admintoken"),
+      }}).then((res) => {
         setPiechartData(res.data);
       })
   },[])
@@ -15,7 +17,7 @@ const PieChart = () => {
   useEffect(() => {
   
 
-console.log(pieChartData,"/admin/get_piechart");
+
 
 
     const chartInstance = new Chart(chartRef.current, {

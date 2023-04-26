@@ -19,6 +19,14 @@ const RoomPage = () => {
   const [displayChat, setDisplayChat] = useState("");
   const[modal,setModal]=useState(false)
 
+
+  const studentid = useSelector(state => state.student._id)
+  const teacher = useSelector(state => state.tutor.tutor_id)
+
+ console.log(teacher,"teacherrrrr iddddddddd");
+  console.log(studentid,"student iddddddddd");
+
+
   const handleUserJoined = useCallback(({ email, id }) => {
     console.log(`Email ${email} joined room`);
     setRemoteSocketId(id);
@@ -101,7 +109,13 @@ const RoomPage = () => {
   const deleteStream = () => {
     setRemoteStream();
     setMyStream();
-    setModal(true)
+    if(teacher){
+     navigate("/tutor/booking_list")
+    }
+    else{
+      
+      setModal(true)
+    }
   };
 
   useEffect(() => {

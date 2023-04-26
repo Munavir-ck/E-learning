@@ -11,17 +11,21 @@ function AdminData() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
-    axios.get("/admin/get_dailyReport",{
+    axios
+      .get("/admin/get_dailyReport", {
         params: {
-            selectedDate,
-          },
-
-    }).then((res) => {
-      console.log(res.data);
-      setTodayTotal(res.data.totalAmount);
-      setTodaySlot(res.data.totalSlot);
-      setBooking(res.data.totalOrder);
-    });
+          selectedDate,
+        },
+        headers: {
+          Authorization: localStorage.getItem("admintoken"),
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setTodayTotal(res.data.totalAmount);
+        setTodaySlot(res.data.totalSlot);
+        setBooking(res.data.totalOrder);
+      });
   }, [selectedDate]);
 
   return (

@@ -35,12 +35,16 @@ function AdminLogin() {
            console.log(formValues);
            axios.post("/admin/login",{
             formValues
-           }).then((res)=>{
+           },
+           { headers: {
+            Authorization: localStorage.getItem("admintoken"),
+          }}
+           ).then((res)=>{
             if(res.data.status){
                 console.log(res.data.token,666666666666);
                 setSubmit(true)
                 localStorage.setItem("admintoken",res.data.token)
-                navigate("/admin")
+                navigate("/admin/home")
             }else{
                 setSubmit(false)
                 seterrorMessage(res.data.message)

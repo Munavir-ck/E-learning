@@ -18,7 +18,7 @@ const Linechart = () => {
       })
       .then((res) => {
         
-        setData(res.data);
+        setData(res.data.result);
       });
   }, []);
 

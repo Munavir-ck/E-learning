@@ -21,13 +21,11 @@ function Reservation() {
   const [checkedValues, setCheckedValues] = useState([]);
   const [submit, setSubmit] = useState(false);
 
-  console.log(filterdSlot, "dateeeeeeeeeeeee");
+  
 
   const [modal, setmodal] = useState(false);
 
-  console.log(checkedValues);
 
-  console.log(filterdSlot, 444);
 
   let { id } = useParams();
 
@@ -51,7 +49,7 @@ function Reservation() {
     }
   };
 
-  // const amount = 50;
+
 
   const customStyles = {
     content: {
@@ -225,7 +223,7 @@ function Reservation() {
                     <div>
                       <div
                         class={`flex items-center mb-4 gap-2 border-2 bg-mycolors hover:bg-mycolors_b ${
-                          item.booking_status === "Success" && "hidden"
+                          item.booking_status === "boocked" && "pointer-events-none opacity-50"
                         } `}
                       >
                         <input

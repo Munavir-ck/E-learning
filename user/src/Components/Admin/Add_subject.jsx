@@ -63,7 +63,7 @@ function Add_subject() {
       },
       {
         headers: {
-          Authorization: localStorage.getItem("token"),
+          Authorization: localStorage.getItem("admintoken"),
         },
       }
     ).then((res)=>{

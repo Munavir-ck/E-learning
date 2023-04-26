@@ -1,139 +1,132 @@
 import React, { useState } from "react";
-import axios from '../../axios/axios'
-import {Progress} from "reactstrap"
-import {ToastContainer,toast} from "react-toastify"
-import {Link} from "react-router-dom";
-import 'react-toastify/dist/ReactToastify.css';
+import axios from "../../axios/axios";
+import { Progress } from "reactstrap";
+import { ToastContainer, toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 import ProgressBar from "./ProgressBAr/ProgressBar";
 
-
 function UploadClass() {
-// const initialState={
-//     selectedVideos:null,
-//     loaded:0
-// }
-const[selectedVideos,setSelectedVideos]=useState(null)
+  // const initialState={
+  //     selectedVideos:null,
+  //     loaded:0
+  // }
+  const [selectedVideos, setSelectedVideos] = useState(null);
 
-const[loaded,Setloading]=useState(0)
+  const [loaded, Setloading] = useState(0);
 
-const[subject,setSubject]=useState("")
-const[Class,setClass]=useState("") 
-const[description,setDescription]=useState("") 
+  const [subject, setSubject] = useState("");
+  const [Class, setClass] = useState("");
+  const [description, setDescription] = useState("");
 
+  const handleClass = (e) => {
+    setClass(e.target.value);
+  };
+  const handleChange = (e) => {
+    setSubject(e.target.value);
+  };
 
-const handleClass=(e)=>{
-  setClass(e.target.value)
-}
-const handleChange=(e)=>{
-
-    setSubject(e.target.value)
-}
-
-const handleDescription=(e)=>{
-  setDescription(e.target.value)
-}
-const maxSelectFile=(event)=>{
+  const handleDescription = (e) => {
+    setDescription(e.target.value);
+  };
+  const maxSelectFile = (event) => {
     console.log(22222222);
-    const files=event.target.files
-   
+    const files = event.target.files;
 
-    if(files.length>1){
-        toast.error("Maximum one file is allowed")
-        event.target.value=null;
-        return false;
-    }else{
-        let err=""
-        for (let i = 0; i < files.length; i++) {
-            if(files[i].size>52428800){
-                err+=files[i].name +""
-
-            }
-            if(err !==""){
-                event.target.value=null;  
-                toast.error(err+"is too large")
-            }
-            
+    if (files.length > 1) {
+      toast.error("Maximum one file is allowed");
+      event.target.value = null;
+      return false;
+    } else {
+      let err = "";
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].size > 52428800) {
+          err += files[i].name + "";
         }
-    }
-    return true
-}
-
-const validation=()=>{
-    if(!selectedVideos){
-
-   return false
-    }
-    return true
-}
-
-const fileChangehandler=(e)=>{
-      const files=e.target.files
-      if(maxSelectFile(e)){
-        setSelectedVideos(files)
-        Setloading(0)
+        if (err !== "") {
+          event.target.value = null;
+          toast.error(err + "is too large");
+        }
       }
-}
+    }
+    return true;
+  };
 
-const handleFileUpload=(e)=>{
-    e.preventDefault()
+  const validation = () => {
+    if (!selectedVideos) {
+      return false;
+    }
+    return true;
+  };
+
+  const fileChangehandler = (e) => {
+    const files = e.target.files;
+    if (maxSelectFile(e)) {
+      setSelectedVideos(files);
+      Setloading(0);
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    e.preventDefault();
     console.log(validation());
-    if(validation()==false){
-        console.log(33333333);
-        toast.error("No files")
-       
+    if (validation() == false) {
+      console.log(33333333);
+      toast.error("No files");
+    } else {
+      const data = new FormData();
+      console.log(data);
+      for (let i = 0; i < selectedVideos.length; i++) {
+        data.append("file", selectedVideos[i]);
       }
-      else{
-        const data=new FormData();
-        console.log(data);
-        for (let i = 0; i < selectedVideos.length; i++) {
-           data.append("file",selectedVideos[i])
-        }
-        data.append("subject",subject)
-        data.append("class",Class)
-        data.append("description",description)
-        axios.post("admin/upload_class",data,{
-            onUploadProgress:ProgressEvent=>{
-                Setloading(ProgressEvent.loaded/ProgressEvent.total*100)
-            }
-        }).then((res)=>{
-            if(res.data.status){
-
-                toast.success(res.data.message)
-            }
-            else{
-                toast.error(res.data.message)   
-            }
-    
-        }).catch((err)=>{
-            console.log(4444444444);
-            toast.error("error")
+      data.append("subject", subject);
+      data.append("class", Class);
+      data.append("description", description);
+      axios
+        .post("admin/upload_class", data, {
+          headers: {
+            Authorization: localStorage.getItem("admintoken"),
+          },
+          onUploadProgress: (ProgressEvent) => {
+            Setloading((ProgressEvent.loaded / ProgressEvent.total) * 100);
+          },
         })
-      }
-   
-  
-}
-
+        .then((res) => {
+          if (res.data.status) {
+            toast.success(res.data.message);
+          } else {
+            toast.error(res.data.message);
+          }
+        })
+        .catch((err) => {
+          console.log(4444444444);
+          toast.error("error");
+        });
+    }
+  };
 
   return (
     <div>
-      
       <section className="bg-gray-50 dark:bg-gray-900 overflow-hidden">
-        
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-               Add Your Classes
+                Add Your Classes
               </h1>
 
-              <ToastContainer/>
-              <form className="space-y-4 md:space-y-6" onSubmit={handleFileUpload}   encType="multipart/form-data">
+              <ToastContainer />
+              <form
+                className="space-y-4 md:space-y-6"
+                onSubmit={handleFileUpload}
+                encType="multipart/form-data"
+              >
                 <div>
-                <label
+                  <label
                     for="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                 CLASS
+                    CLASS
                   </label>
                   <input
                     type="text"
@@ -145,11 +138,11 @@ const handleFileUpload=(e)=>{
                     value={Class}
                     required=""
                   />
-                   <label
+                  <label
                     for="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                 Description
+                    Description
                   </label>
                   <input
                     type="text"
@@ -165,7 +158,7 @@ const handleFileUpload=(e)=>{
                     for="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                  Subject
+                    Subject
                   </label>
                   <input
                     type="text"
@@ -178,7 +171,7 @@ const handleFileUpload=(e)=>{
                     required=""
                   />
                 </div>
-               
+
                 <div class="flex items-center justify-center w-full">
                   <label
                     for="dropzone-file"
@@ -204,18 +197,17 @@ const handleFileUpload=(e)=>{
                         <span class="font-semibold">Click to upload</span> or
                         drag and drop
                       </p>
-                    
+
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         MP4(MAX. 50 MB)
                       </p>
                     </div>
-                    <input 
-                    id="dropzone-file" 
-                    type="file" 
-                    className="hidden" 
-                    accept="video/"
-                    onChange={fileChangehandler}
-                    
+                    <input
+                      id="dropzone-file"
+                      type="file"
+                      className="hidden"
+                      accept="video/"
+                      onChange={fileChangehandler}
                     />
                   </label>
                   {/* <Progress className=""
@@ -226,17 +218,15 @@ const handleFileUpload=(e)=>{
                {isNaN(Math.round(loaded,2))?0:Math.round(loaded,2)}%
                   </Progress> */}
                 </div>
-                  <ProgressBar  value={loaded} />
-               
-              
+                <ProgressBar value={loaded} />
+
                 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                 Submit
+                  Submit
                 </button>
               </form>
 
               {/* <img src="http://localhost:5001/thumbnails/061caf4726c420d8c445a18d860ad0e77e4038d36d7ec7d85c34cc01ac199e4d.png
 " /> */}
-             
             </div>
           </div>
         </div>

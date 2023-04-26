@@ -4,9 +4,9 @@ import { useSocket } from "../src/contex/socketProvider";
 import "./App.css";
 import { useState, useEffect } from "react";
 
-import Admin from "./Authentication/Admin";
-import Teacher from "./Authentication/Teacher";
-import User from "./Authentication/User";
+import Admin from "./Routes/Admin";
+import Teacher from "./Routes/Teacher";
+import User from "./Routes/User";
 
 function App() {
   const socket = useSocket();

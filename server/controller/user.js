@@ -345,44 +345,39 @@ const reservation_page = async (req, res) => {
 
 const filter_slot = async (req, res) => {
   try {
-    const teacherID = new mongoose.Types.ObjectId(req.body.id);;
+    const teacherID = new mongoose.Types.ObjectId(req.body.id);
     const dateTostring = req.body.selectedDate;
- 
+
     console.log(dateTostring);
     if (dateTostring) {
       const date = new Date(dateTostring);
-     
+
       const utcDate = new Date(
         Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
       );
 
-
-
-     
-
       const data = await teacherDb.aggregate([
         { $match: { _id: teacherID, "slot.date": utcDate } },
-        { $project: {
-          slots: {
-            $filter: {
-              input: "$slot",
-              as: "s",
-              cond: { $eq: ["$$s.date", utcDate] }
-            }
-          }
-        }}
-      ])
-      
-      if(data.length===0){
-     res.json({ status: false})
-      }else{
+        {
+          $project: {
+            slots: {
+              $filter: {
+                input: "$slot",
+                as: "s",
+                cond: { $eq: ["$$s.date", utcDate] },
+              },
+            },
+          },
+        },
+      ]);
 
+      if (data.length === 0) {
+        res.json({ status: false });
+      } else {
         res.json({ status: true, result: data });
-       console.log(data);
+        console.log(data);
       }
-
     }
-
   } catch (error) {
     console.log(error);
   }
@@ -418,17 +413,22 @@ const creat_booking = async (req, res) => {
     const filteredResult = result.slot.filter((obj) => {
       return slotId.includes(obj._id.toString());
     });
-    const count=filteredResult.length
-    const totalAmount=amount*count
+    const count = filteredResult.length;
+    const totalAmount = amount * count;
     await orderDb
       .create({
         student,
         slot: filteredResult,
-        amount:totalAmount,
+        amount: totalAmount,
         teacher,
         order_id,
       })
       .then(async (data) => {
+        await teacherDb.updateOne(
+          { _id: teacher, "slot._id": { $in: slot } },
+          { $set: { "slot.$.booking_status": "boocked" } }
+        );
+
         await Transaction.create({
           description: "Booking payment",
           amount: amount,
@@ -501,7 +501,6 @@ const get_bookings = async (req, res) => {
         $sort: { createdAt: -1 },
       },
     ]);
-    
 
     res.json({ status: true, result: data });
   } catch (error) {
@@ -516,6 +515,11 @@ const cancel_booking = async (req, res) => {
     const result = await orderDb.updateOne(
       { _id: order_id, "slot._id": slotid },
       { $set: { "slot.$.booking_status": "Cancelled" } }
+    );
+
+    await teacherDb.updateOne(
+      { "slot._id":slot_id},
+      { $set: { "slot.$.booking_status": "pending" } }
     );
     res.json({ status: true, result: result });
   } catch (error) {
@@ -645,8 +649,8 @@ const get_subject = async (req, res) => {
 };
 
 const filter_our_teacher = async (req, res) => {
-  console.log(121212122);
-  console.log(req.body);
+
+ 
   const { checkedValues } = req.body;
 
   let ratingArr = [];
@@ -680,10 +684,7 @@ const filter_our_teacher = async (req, res) => {
 
     const maxRating = Math.max(...ratingArr);
 
-    console.log(maxRating,"max rating");
-    console.log(ratings), "rating";
-    console.log(subjects, "subject");
-    console.log(classes, "class");
+   
 
     await teacherDb
       .aggregate([
@@ -695,20 +696,14 @@ const filter_our_teacher = async (req, res) => {
               { rating: { $in: ratingArr } },
               // { rating: { $gt: maxRating },}
             ],
-           
           },
         },
       ])
       .then((data) => {
         console.log(data, 66666);
-        res.json({status:true, result: data });
+        res.json({ status: true, result: data });
       });
   }
-
- 
-
-
- 
 };
 
 export {

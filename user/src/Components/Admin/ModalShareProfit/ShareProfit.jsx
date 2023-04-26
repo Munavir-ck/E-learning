@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Paypal from "../PaypalAdmin/Paypal";
 function ShareProfit({ modal, setModal,teacher, transaction_id }) {
 
-    console.log(teacher,12121212121212121);
+    
 
     const[submit,setSubmit]=useState(false)
 

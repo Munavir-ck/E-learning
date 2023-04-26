@@ -4,7 +4,7 @@ const adminAuth=async(req,res,next)=>{
 
     console.log(process.env.JWT_SECRET_KEY);
  
-    const token=req.headers['admintoken']
+    const token=req.headers['authorization']
     if(!token){
         res.send({ status:false, "message": "You need token" })
        

@@ -13,6 +13,9 @@ const Linechart = () => {
   const [data, setData] = useState([]);
 
 
+console.log(data,"sjhdgajhkdfgasdjhf");
+
+
   function MonthName(num) {
     const monthNames = ["January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"];
@@ -40,7 +43,7 @@ const Linechart = () => {
       })
       .then((res) => {
         
-        setData(res.data);
+        setData(res.data.result);
       });
   }, []);
 

@@ -7,7 +7,7 @@ function Teachers_list() {
   useEffect(() => {
     axios
       .get("/admin/get_teachers", {
-        headers: { adminToken: localStorage.getItem("admintoken") },
+        headers: { Authorization: localStorage.getItem("admintoken") },
       })
       .then((res) => {
         const list = res.data.data;

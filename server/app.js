@@ -63,7 +63,7 @@ const socketidToEmailMap = new Map();
 
 io.on("connection", (socket) => {
 
-    console.log(`Socket Connected`, socket.id);
+  
 
     socket.on('student:initial-connection',({student_id})=>{
         

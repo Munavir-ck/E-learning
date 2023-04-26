@@ -20,7 +20,9 @@ function AddTeachers() {
   console.log(formValues);
 
   useEffect(() => {
-    axios.get("/admin/get_subject", {}).then((res) => {
+    axios.get("/admin/get_subject",{ headers: {
+      Authorization: localStorage.getItem("admintoken"),
+    }}).then((res) => {
       setSubject(res.data.result);
     });
   }, []);
@@ -31,7 +33,9 @@ function AddTeachers() {
     axios
       .post("/admin/add_teachers", {
         formValues,
-      })
+      },{ headers: {
+        Authorization: localStorage.getItem("admintoken"),
+      }},)
       .then((res) => {
         if (res.data.status) {
           toast.success("Success");

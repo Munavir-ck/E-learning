@@ -23,7 +23,7 @@ function Transactions() {
   useEffect(() => {
     axios
       .get("/admin/get_transction", {
-        headers: { adminToken: localStorage.getItem("admintoken") },
+        headers: { Authorization: localStorage.getItem("admintoken") },
       })
       .then((res) => {
         const list = res.data.result;

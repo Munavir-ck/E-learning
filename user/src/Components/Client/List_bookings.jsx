@@ -25,9 +25,9 @@ const List_bookings = () => {
   const navigate = useNavigate();
 
   
-
+  const id = useSelector((state) => state.student._id);
   const email = useSelector((state) => state.student.email);
-  const room = useSelector((state) => state.room.room);
+  // const room = useSelector((state) => state.room.room);
 
   const handlechat = (studentId, teacherId) => {
     socket.emit("room:joinchat", studentId);
@@ -54,8 +54,9 @@ const List_bookings = () => {
   }, [socket]);
 
   const handleOnclick = (teacherId) => {
+    const room=id
     console.log(teacherId);
-    socket.emit("room:join", { email, room });
+    socket.emit("room:join", { email,  room });
     dispatch(
       setTeacher({
         teacherId: teacherId,
@@ -88,7 +89,7 @@ const List_bookings = () => {
   const handlejoinRoom = useCallback(
     (data) => {
       const { email, room } = data;
-      navigate(`/room/${room}`);
+      navigate(`/room/${id}`);
     },
     [navigate]
   );
