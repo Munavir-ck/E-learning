@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "../../axios/axios";
 import moment from "moment";
+import Spinner from "./Spinner/Spinner";
 
 function TeacherDetail() {
   const [teacher, setTeacher] = useState({});
   const [reviews, setReviews] = useState([]);
   const [totalSatrs, setTotalStars] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+
   const [stars, setStars] = useState([
     { id: 1, color: false },
     { id: 2, color: false },
@@ -32,12 +35,7 @@ function TeacherDetail() {
     setTotalStars(total);
   }, [reviews, stars2]);
 
-  // Render the stars as needed...
-
-
-  useEffect(()=>{
-
-  },[reviews])
+  useEffect(() => {}, [reviews]);
 
   const rating = teacher.rating;
 
@@ -48,14 +46,16 @@ function TeacherDetail() {
   for (let i = 0; i < reviews.length; i++) {
     for (let j = 0; j < reviews[i].rating; j++) {
       if (totalSatrs.length > i && totalSatrs[i].length > j) {
-       totalSatrs[i][j].color=true
+        totalSatrs[i][j].color = true;
       }
     }
   }
-console.log(totalSatrs);
+  
   const { id } = useParams();
 
   useEffect(() => {
+    setLoading(true);
+
     axios
       .get("/get_teacherDetails", {
         params: {
@@ -75,14 +75,19 @@ console.log(totalSatrs);
         },
       })
       .then((res) => {
-        console.log(res.data);
+        setLoading(false);
         setReviews(res.data.result);
       });
   }, []);
 
   return (
     <div>
-      <section className="text-gray-700 body-font overflow-hidden bg-white">
+      {isLoading && <Spinner />}
+      <section
+        className={`text-gray-700 body-font overflow-hidden bg-white ${
+          isLoading && "pointer-events-none opacity-20"
+        }`}
+      >
         <div className="container px-5 py-24 mx-auto ">
           <div className="lg:w-4/5 mx-auto flex flex-wrap ">
             <img
@@ -165,7 +170,7 @@ console.log(totalSatrs);
           </a>
           <div className="flex">
             {reviews.length !== 0 &&
-              reviews.map((item) => {
+              reviews.map((item,index) => {
                 return (
                   <div className="mb-2 shadow-lg rounded-t-8xl rounded-b-5xl overflow-hidden h-60 w-2/5">
                     <div className="pt-3 pb-3 md:pb-1 px-4 md:px-16 bg-white bg-opacity-40">
@@ -176,26 +181,35 @@ console.log(totalSatrs);
                           alt=""
                         />
                         <h4 className="w-full md:w-auto text-xl font-heading font-medium">
-                         {item.student.name}
+                          {item.student.name}
                         </h4>
                         <div className="w-full md:w-px h-2 md:h-8 mx-8 bg-transparent md:bg-gray-200"></div>
                         <span className="mr-4 text-xl font-heading font-medium">
-                          5.0
+                        {item.rating}
                         </span>
                         <div className="inline-flex">
-                          {totalSatrs.map((item,i) => {
-                            return(
-                              
-                              totalSatrs[i].map((star, j) =>{ 
-                                if(j<5){
+                       {console.log(totalSatrs, "______________,,,, mr-1")}
+                          {totalSatrs.map((item, i) => {
+                        
+                            if(i===index){
 
-                                  console.log(totalSatrs[i],"inline-block mr-1");
-                                 return (
-                                    <a className="inline-block mr-1" href="#" key={j}>
+
+                              return item.map((star, j) => {
+                                console.log(item.length)
+                             
+                                  console.log(item, "inline-block,,,,, mr-1");
+                                  return (
+                                    <a
+                                      className="inline-block mr-1"
+                                      href="#"
+                                      key={j}
+                                    >
                                       <svg
                                         aria-hidden="true"
                                         className={`w-5 h-5 ${
-                                          star.color ? "text-yellow-400" : "text-gray-300"
+                                          star.color
+                                            ? "text-yellow-400"
+                                            : "text-gray-300"
                                         }`}
                                         fill="currentColor"
                                         viewBox="0 0 20 20"
@@ -205,15 +219,11 @@ console.log(totalSatrs);
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                       </svg>
                                     </a>
-                                  )
-                                }
-                               })
-                              
-                                  
+                                  );
                                 
-                              
-                            )
-                           
+                              });
+                            }
+
                           })}
                         </div>
                       </div>

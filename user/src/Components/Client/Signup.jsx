@@ -3,6 +3,7 @@ import axios from "../../axios/axios";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Spinner from "./Spinner/Spinner";
 
 const Signup = () => {
   const initialValues = {
@@ -22,6 +23,7 @@ const Signup = () => {
   const [otp, setOtp] = useState(false);
   const [storeOTP, setStoreotp] = useState("");
   const navigate = useNavigate();
+  const [isLoading,setLoading]=useState(false)
 
   const handleOtp = async () => {
     const number = formValues.phone;
@@ -71,7 +73,7 @@ const Signup = () => {
     setSubmit(true);
     if (isCheck) {
       if (Object.keys(formErrors).length === 0 && isSubmit) {
-       
+        setLoading(true)
         axios
           .post("/signup", {
             name: formValues.name,
@@ -83,16 +85,15 @@ const Signup = () => {
             address:formValues.address
           })
           .then((res) => {
-            console.log(res.data);
-            console.log(222222222222222222);
+           
             if (res.data.status) {
-              console.log(33333333);
+              setLoading(false)
               setSubmit(true);
               toast.success("success");
               navigate("/login");
             } else {
               seterrorMessage(res.data.message);
-              console.log(errorMessage, 1111111);
+           
               setSubmit(false);
             }
           });
@@ -102,9 +103,9 @@ const Signup = () => {
       toast.error("OTP NOT VERIFIED");
     }
   };
-  console.log(formErrors);
+ 
   const validate = (values) => {
-    console.log(formErrors);
+   
     const errors = {};
     const regex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -145,7 +146,7 @@ const Signup = () => {
   useEffect(() => {}, [formErrors]);
 
   return (
-    <div class="min-h-screen p-6 bg-gray-100 flex items-center justify-center">
+    <div class={`min-h-screen p-6 bg-gray-100 flex items-center justify-center ${isLoading&&"pointer-events-none opacity-20"}`}> {isLoading&&<Spinner/>}
       <div class="container max-w-screen-lg mx-auto">
         <div>
           <ToastContainer />

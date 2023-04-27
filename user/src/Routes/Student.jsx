@@ -13,8 +13,9 @@ import TeacherDetailPage from "../pages/Client/TeacherDetailPage";
 import ReservationPage from "../pages/Client/ReservationPage";
 import Profile_page from "../pages/Client/Profile_page";
 import { Navigate } from "react-router-dom";
+import ErrorPage from "../Components/Client/ErrorPage/ErrorPage";
 
-function User() {
+function Student() {
 
   const isAuth=localStorage.getItem("token")
 
@@ -34,9 +35,10 @@ function User() {
         <Route path="/list_booking" element={isAuth?<List_booking_page />:<Navigate to={"/login"}/>}/>
         <Route path="/room/:roomId" element={isAuth?<RoomPage />:<Navigate to={"/login"}/>} />
         <Route path="/chat_room/:id" element={isAuth?<ChatPage />:<Navigate to={"/login"}/>} />
+        <Route path="/*" element={<ErrorPage/>} />
       </Routes>
     </>
   );
 }
 
-export default User;
+export default  Student;

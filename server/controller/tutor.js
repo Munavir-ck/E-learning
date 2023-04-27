@@ -9,8 +9,7 @@ import Transaction from "../model/transaction.js";
 
 const googleAuthTutor = async (req, res) => {
   try {
-    console.log(1111111111111);
-    console.log(req.body.datas.data.email);
+ 
     const email = req.body.datas.data.email;
 
     const tutor = await teacherDb.findOne({ email: email });
@@ -46,11 +45,11 @@ const get_profile = async (req, res) => {
 
 const edit_profile_image = async (req, res) => {
   try {
-    console.log(222222222222);
+   
     console.log(req.body.ID);
     const profile = "my-profile-folder";
     const { ID, imgBase } = req.body;
-    console.log(3333333333);
+
     const result = await cloudinary.uploader
       .upload(imgBase, {
         folder: profile,
@@ -80,7 +79,7 @@ const create_slot = async (req, res) => {
     .findOneAndUpdate({ _id: ID }, { $push: { slot: data } })
     .then((data) => {
       res.json({ status: true });
-      console.log(data);
+     
     })
     .catch((err) => {
       res.json({ status: false });
@@ -95,7 +94,7 @@ const get_slot = async (req, res) => {
   await teacherDb
     .findOne({ _id: ID })
     .then((data) => {
-      console.log(data);
+     
       const result = data.slot;
       res.json({ status: true, result });
     })
@@ -106,18 +105,14 @@ const get_slot = async (req, res) => {
 };
 
 const get_bookings = async (req, res) => {
-  console.log(2323232323);
-  console.log(req.userId);
+
 
   const ID = req.userId;
 
   const objectId = new mongoose.Types.ObjectId(ID);
 
   try {
-    // const data = await orderDb
-    // .find({ teacher: ID })
-    // .populate("student", "name phone")
-    // .unwind("slot");
+  
 
     const data = await orderDb.aggregate([
       {
@@ -152,7 +147,7 @@ const booking_actions = async (req, res) => {
   const slotid = new mongoose.Types.ObjectId(slot_id);
 
   if (value === "accept") {
-    console.log(2323232323);
+  
 
     try {
       const result = await orderDb.updateOne(
@@ -240,10 +235,9 @@ const get_chat_reciever = async (req, res) => {
 
 const get_monthlylineChart = async (req, res) => {
   try {
-    console.log(232322323);
+   
     const teacherId = req.userId;
-    console.log(teacherId);
-    const teacher_id=new mongoose.Types.ObjectId(teacherId)
+   
     const monthlyReport = await Transaction.aggregate([
       {
         $match: {

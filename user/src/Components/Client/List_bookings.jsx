@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { useSocket } from "../../contex/socketProvider";
 import { setTeacher } from "../../Store/Slice/teacherSlice";
 import Pagination from "./Pagination/Pagination";
+import Spinner from "./Spinner/Spinner";
 
 const List_bookings = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ const List_bookings = () => {
   const [bookings, setBookings] = useState([]);
   const [currentPage,setCurrentPage]=useState(1)
   const navigate = useNavigate();
-
+  const [isLoading,setLoading]=useState(false)
   
   const id = useSelector((state) => state.student._id);
   const email = useSelector((state) => state.student.email);
@@ -130,6 +131,7 @@ const List_bookings = () => {
     future_minutes.toString().padStart(2, "0");
   console.log(future_time, "future");
   useEffect(() => {
+    setLoading(true)
     axios
       .get("/get_bookings", {
         headers: {
@@ -137,12 +139,13 @@ const List_bookings = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        setLoading(false)
         setBookings(res.data.result);
       });
   }, []);
 
   const handleActions = (slot_id, order_id) => {
+    setLoading(true)
     axios
       .post(
         "/cancel_booking",
@@ -154,6 +157,7 @@ const List_bookings = () => {
         }
       )
       .then((res) => {
+        setLoading(false)
         if (res.data.status) {
           toast.success("Suuccefully Updated");
           let newObj = [];
@@ -168,16 +172,16 @@ const List_bookings = () => {
             }
             newObj.push(item);
           });
-          console.log(newObj);
+         
 
           setBookings(newObj);
         }
       });
 
-    console.log(slot_id, order_id);
+   
   };
   return (
-    <>
+    <div className= {isLoading&&"pointer-events-none opacity-20"} >{isLoading&&<Spinner/>}
       <div id="app" className="bg-white">
         <div className="container mx-auto">
           <ToastContainer />
@@ -303,7 +307,7 @@ const List_bookings = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 import Admin from "./Routes/Admin";
 import Teacher from "./Routes/Teacher";
-import User from "./Routes/User";
+import User from "./Routes/Student";
 
 function App() {
   const socket = useSocket();
@@ -45,9 +45,14 @@ function App() {
     <div>
       <ToastContainer />
       <BrowserRouter>
-        <User />
-        <Teacher />
-        <Admin />
+      <Routes>
+       <Route path="/*" element={ <User />}/>
+       <Route path="/admin/*" element={  <Admin />}/>
+       <Route path="/tutor/*" element={ <Teacher />}/>
+      
+       
+
+      </Routes>
       </BrowserRouter>
     </div>
   );

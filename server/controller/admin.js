@@ -20,14 +20,14 @@ dotenv.config({ silent: process.env.NODE_ENV === "production" });
 const login = async (req, res) => {
   try {
     const { email, password } = req.body.formValues;
-    console.log(2323232323);
+   
     const adminMail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
     if (adminMail === email) {
-      console.log(2323232323);
+  
       if (adminPassword === password) {
         const token = jwt.sign({ adminMail }, process.env.JWT_SECRET_KEY, {
-          expiresIn: 300,
+          expiresIn: 864000,
         });
         console.log(token);
 

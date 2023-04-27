@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import ModalSuccess from "./Modal/ModalSuccess";
+import Spinner from "./Spinner/Spinner";
 
 function Reservation() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -20,6 +21,7 @@ function Reservation() {
   const [filterdSlot, setFiltersSlot] = useState([]);
   const [checkedValues, setCheckedValues] = useState([]);
   const [submit, setSubmit] = useState(false);
+  const [isLoading,setLoading]=useState(false)
 
   
 
@@ -73,6 +75,7 @@ function Reservation() {
   };
 
   useEffect(() => {
+    setLoading(true)
     axios
       .get("/reservation_page", {
         params: {
@@ -83,6 +86,7 @@ function Reservation() {
         },
       })
       .then((res) => {
+        setLoading(false)
         setTeacher(res.data.result);
       })
       .catch((err) => {});
@@ -121,7 +125,7 @@ function Reservation() {
   }, [selectedDate]);
 
   return (
-    <div>
+    <div className= {isLoading&&"pointer-events-none opacity-20"}>{isLoading&&<Spinner/>}
       <div className="flex">
         <div className="w-screen">
           <ToastContainer />

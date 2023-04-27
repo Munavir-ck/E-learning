@@ -28,9 +28,11 @@ function Booking() {
   const [teachers, setTeachers] = useState([]);
   const [error, setError] = useState(" ");
   const [subject, setSubject] = useState([]);
+ const [filterdTeachers,setFilteredTeachers]=useState([])
+
   const student_id = useSelector((state) => state.student._id);
 
-  console.log(teachers,'iam teachers');
+  
 
   const handleChange = (e) => {
     setSubject(e.target.value);
@@ -62,7 +64,7 @@ function Booking() {
         // console.log(res.data);
         if (res.data.status) {
           console.log(res.data.result,'filtersed teacher');
-          setTeachers(res.data.result);
+          setFilteredTeachers(res.data.result);
         } else {
           setTeachers([]);
           setError(res.data.message);
@@ -145,7 +147,6 @@ const stars=[1,2,3,4,5]
     
   ];
  
-  // console.log(subject, 333333);
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -427,7 +428,7 @@ const stars=[1,2,3,4,5]
               {/* Product grid */}
               <div className="lg:col-span-3">
                 <div className=" colo  grid gap-6 mt-10  text-center sm:grid-cols-2 m-8  md:grid-cols-3 ">
-                  {teachers.map((items, key) => (
+                  {filterdTeachers.length!==0?filterdTeachers:teachers.map((items, key) => (
                     <Link to={`/teacher_details/${items._id}`}>
                       <div className="max-w-sm  overflow-hidden shadow-lg m-10 ">
                         <img

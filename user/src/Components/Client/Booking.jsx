@@ -27,6 +27,7 @@ import {
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { BsFillChatFill } from "react-icons/bs";
+import Spinner from "./Spinner/Spinner";
 
 
 
@@ -39,6 +40,7 @@ function Booking() {
   const [teachers, setTeachers] = useState([]);
   const [error, setError] = useState(" ");
   const [subject, setSubject] = useState([]);
+  const [isLoading,setLoading]=useState(false)
   const student_id = useSelector((state) => state.student._id);
 
   const handleChange = (e) => {
@@ -58,6 +60,7 @@ function Booking() {
   };
 
   useEffect(() => {
+    setLoading(true)
     axios
       .get(
         `/filter_teachers`,
@@ -69,7 +72,7 @@ function Booking() {
         }
       )
       .then((res) => {
-        console.log(res.data);
+        setLoading(false)
         if (res.data.status) {
           setTeachers(res.data.result);
         } else {
@@ -83,25 +86,8 @@ function Booking() {
   }, [checkedValues]);
 
   useEffect(() => {
-    //   axios.get(`/filter_teachers`,{params:{student_id :student_id }
-    //  }, { headers: {
-    //       Authorization: localStorage.getItem('token')
-    //     }
-
-    //   })
-    //   .then(res => {
-    //     console.log(res.data);
-    //     if(res.data.status){
-    //       setTeachers(res.data.result)
-    //     }
-    //     else{
-    //       setError(res.data.message)
-    //     }
-    //   })
-    //   .catch(error => {
-    //     console.error(error);
-    //   });
-
+   
+    setLoading(true)
     axios
       .get(
         `/get_filtred_subject`,
@@ -113,7 +99,7 @@ function Booking() {
         }
       )
       .then((res) => {
-        console.log(res.data);
+        setLoading(false)
         if (res.data.status) {
           setSubject(res.data.result);
         } else {
@@ -134,20 +120,17 @@ function Booking() {
       ]),
     },
   ];
-  console.log(filters[0].options, 88);
-  console.log(subject, 333333);
+ 
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  console.log(teachers, 1111);
+ 
   const posts = [1, 2, 3, 4];
 
-  filters.map((items) => {
-    console.log(items, 222);
-  });
+  
 
   return (
-    <div className="bg-white">
-      <div>
+    <div className="bg-white">{isLoading&&<Spinner/>}
+      <div className={isLoading&&"pointer-events-none opacity-20"}>
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>
           <Dialog

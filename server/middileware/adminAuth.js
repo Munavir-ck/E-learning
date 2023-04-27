@@ -10,15 +10,16 @@ const adminAuth=async(req,res,next)=>{
        
     }
     else{
+
+
     jwt.verify(token,process.env.JWT_SECRET_KEY,(err,decode)=>{
 
      if(err){
-        console.log(err);
-        console.log(77777777);
+     
         return res.json({status:false,message:"failed to authenticate"})
      }
      else{
-        console.log(666666);
+       
       req.User=decode.adminMail
         next()
      }

@@ -3,18 +3,20 @@ import axios from "../../axios/axios";
 import ReactPlayer from "react-player";
 import { motion } from "framer-motion";
 import SearchClass from "../../Components/Client/Search/SearchClass";
+import Spinner from "./Spinner/Spinner";
 
 export default function Classes() {
   const [classes, setClasses] = useState([]);
   const [videoUrl, setVideoUrl] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [searchError, setError] = useState(null);
+  const [isLoading,setLoading]=useState(false)
 
   useEffect(() => {
     async function fetchData() {
-      
+      setLoading(true)
       const response = await axios.get("/get_classes").then((res) => {
-       
+        setLoading(false)
         setClasses(res.data.classes);
       });
     }
@@ -36,7 +38,7 @@ export default function Classes() {
 
   console.log(searchResult, 3333333333333);
   return (
-    <>
+    <div className={isLoading&&"pointer-events-none opacity-20"}>{isLoading&&<Spinner/>}
       <motion.div className=" w-full h-32  flex items-center justify-center ">
         <motion.h2
           initial={{ opacity: 0, y: 30, x: 100 }}
@@ -125,6 +127,6 @@ export default function Classes() {
 
         <div></div>
       </div>
-    </>
+    </div>
   );
 }
