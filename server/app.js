@@ -25,13 +25,16 @@ const server = app.listen(port,()=>{
 
 const io = new Server(server, {
   cors: {
-    origin:['http://localhost:3000','https://admin.socket.io'],
+    origin:['https://main.d2dge6xflkotuz.amplifyapp.com','https://admin.socket.io'],
     credentials: true
   }
 });
 
+
+
+
 app.use(cors({
-    origin: ['http://localhost:3000'],
+    origin: ['https://main.d2dge6xflkotuz.amplifyapp.com'],
     methods:["GET","POST"],
     credentials:true,
 }))

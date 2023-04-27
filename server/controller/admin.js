@@ -106,8 +106,8 @@ const upload_class = async (req, res) => {
             description: req.body.description,
             class: req.body.class,
             subject: req.body.subject,
-            video_path: `http://localhost:${process.env.PORT}${videoPath}`,
-            thumbnail_path: `http://localhost:${process.env.PORT}${path}`,
+            video_path: `https://e-learn-34bt.onrender.com${videoPath}`,
+            thumbnail_path: `https://e-learn-34bt.onrender.com${path}`,
           })
           .then((data) => {
             res.json({ status: true, message: "Successfully added" });
