@@ -26,7 +26,7 @@ useEffect(()=>{
 
 const handleLogout=()=>{
     localStorage.removeItem("admintoken")
-    navigate("/admin/login")
+    navigate("/admin/")
 }
 
     return (

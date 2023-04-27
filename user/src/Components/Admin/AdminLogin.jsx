@@ -82,7 +82,7 @@ function AdminLogin() {
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                  Sign in to your account
+                  Admin Login
               </h1>
               {Object.keys(formErrors).length === 0 && isSubmit ? 
               <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
@@ -119,7 +119,7 @@ function AdminLogin() {
                       <a href="#" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</a>
                   </div>
                   <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  admin  Button
+                 Submit
                   </button>
                 
               </form>

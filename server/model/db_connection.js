@@ -2,8 +2,10 @@ import mongoose from "mongoose"
 
 mongoose.set("strictQuery", false);
 
+
+
 const dbConnection=function (cb){
-    mongoose.connect("mongodb://0.0.0.0:27017/course", {
+    mongoose.connect(process.env.MYDB, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     }).then(()=>{
