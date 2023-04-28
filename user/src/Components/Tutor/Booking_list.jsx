@@ -35,18 +35,22 @@ function Booking_list() {
 
     const handlechat=(studentId)=>{
 
-
+      console.log(studentId);
       socket.emit("room:joinchat",studentId)
+      console.log(111111111111111);
       dispatch(
         setStudentId({
           studentId:studentId
         })
       )
     }
-    
+     
+    console.log(232323232323);
     
     const handlejoinChatRoom=(data)=>{
-      navigate(`/chat_room_tutor/${data}`)
+      console.log("socket emitted");
+      console.log(data);
+      navigate(`/tutor/chat_room_tutor/${data}`)
        }
 
 
@@ -228,7 +232,11 @@ function Booking_list() {
                             <div className="flex-shrink-0 w-10 h-10">
                               <img
                                 className="w-full h-full rounded-full"
-                                src="https://images.unsplash.com/photo-1522609925277-66fea332c575?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&h=160&w=160&q=80"
+                                src={
+                                  items.student[0].image
+                                    ? items.student[0].image
+                                    : "../../../avatar.png"
+                                }
                                 alt=""
                               />
                             </div>

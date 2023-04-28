@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "../pages/Client/Home";
 import Demo_classes from "../pages/Client/Demo_classes";
@@ -17,9 +17,18 @@ import ErrorPage from "../Components/Client/ErrorPage/ErrorPage";
 
 function Student() {
 
-  const isAuth=localStorage.getItem("token")
+  const [isAuth,setisAuth]=useState("")
 
-  console.log(isAuth);
+  useEffect(()=>{
+
+    const isAuth=localStorage.getItem("token")
+    setisAuth(isAuth)
+  })
+
+
+  
+
+
   return (
     <>
       <Routes>

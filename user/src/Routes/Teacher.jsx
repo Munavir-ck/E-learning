@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import TutorHome from "../pages/Tutor/TutorHome";
 import TeacherLogin from "../Components/Tutor/TeacherLogin";
@@ -11,9 +11,12 @@ import ErrorPage from '../Components/Admin/ErrorPage/ErrorPage';
 
 
 function Teacher() {
-  const teacherToken = localStorage.getItem("tutortoken");
+ const[teacherToken,setTeacherToken]=useState("")
 
-
+useEffect(()=>{
+  const teacherToken = localStorage.getItem("tutortoken")
+  setTeacherToken(teacherToken)
+},[])
   return (
     <>
       <Routes>

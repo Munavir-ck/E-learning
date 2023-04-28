@@ -11,7 +11,7 @@ export const  useSocket =()=>{
 
 export const SocketProvider=(probs)=> {
 
-    const socket=useMemo(()=>io("localhost:5001"))
+    const socket=useMemo(()=>io("https://e-learn-34bt.onrender.com"))
   return (
     <socketContext.Provider  value={socket}>
       {probs.children}

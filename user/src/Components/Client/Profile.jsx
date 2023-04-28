@@ -34,7 +34,7 @@ function Profile() {
       if (image) {
         setLoading(true)
         const imgBase = await toBase64(image);
-        console.log(imgBase, 333333);
+      
         setImage();
         axios
           .post(
@@ -62,7 +62,7 @@ function Profile() {
                 _id: student._id,
               })
             );
-            console.log(res.data.data.image, 3333);
+         
           })
           .catch((res) => {
             console.log("error");
@@ -91,7 +91,7 @@ function Profile() {
       });
   }, [newImage]);
 
-  console.log(student);
+
   return (
     <div className= {isLoading&&"pointer-events-none opacity-20"}>{isLoading&&<Spinner/>}
       <div className="bg-gray-100">

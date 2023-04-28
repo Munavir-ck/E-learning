@@ -56,7 +56,7 @@ function ModalSuccess({ modal,setModal}) {
                     href="#"
                     class="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3"
                   >
-                    GO HPME
+                    GO HOME
                   </a>
                 </div>
               </div>

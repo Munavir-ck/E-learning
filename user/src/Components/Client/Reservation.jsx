@@ -111,7 +111,7 @@ function Reservation() {
         )
         .then((res) => {
           if (res.data.status) {
-            console.log(res.data);
+          
 
             setFiltersSlot(res.data.result[0].slots);
           } else {
@@ -131,7 +131,7 @@ function Reservation() {
           <ToastContainer />
           <div className="relative mx-auto mt-20 mb-20 max-w-screen-lg overflow-hidden rounded-t-xl bg-mycolors py-32 text-center shadow-xl shadow-gray-300">
             <h1 className="mt-2 px-8 text-3xl font-bold text-white md:text-5xl">
-              Book an appointment
+              Book Your Teacher
             </h1>
             <p className="mt-6 text-lg text-white">
               Get an appointment with our experienced accountants

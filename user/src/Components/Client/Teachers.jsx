@@ -28,6 +28,8 @@ function Booking() {
   const [teachers, setTeachers] = useState([]);
   const [error, setError] = useState(" ");
   const [subject, setSubject] = useState([]);
+  const[filter,setFilter]=useState(false)
+
  const [filterdTeachers,setFilteredTeachers]=useState([])
 
   const student_id = useSelector((state) => state.student._id);
@@ -52,8 +54,7 @@ function Booking() {
   };
 
   useEffect(() => {
-    console.log('iam useeffect');
-    console.log(checkedValues,2323232323232323);
+   
     axios
       .post(
         `/filter_our_teacher`,
@@ -63,7 +64,8 @@ function Booking() {
       .then((res) => {
         // console.log(res.data);
         if (res.data.status) {
-          console.log(res.data.result,'filtersed teacher');
+        
+          setFilter(true)
           setFilteredTeachers(res.data.result);
         } else {
           setTeachers([]);
@@ -107,7 +109,7 @@ function Booking() {
         }
       )
       .then((res) => {
-        console.log(res.data, 2222222);
+      
         if (res.data.status) {
           setSubject(res.data.result);
         } else {
@@ -434,8 +436,8 @@ const stars=[1,2,3,4,5]
                         <img
                           className="w-full h-5/4"
                           src={
-                            teachers.image
-                              ? teachers.image
+                            items.image
+                              ? items.image
                               : "../../../avatar.png"
                           }
                           alt="Sunset in the mountains"

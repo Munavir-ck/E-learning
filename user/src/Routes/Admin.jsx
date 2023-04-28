@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import AdminHome from '../pages/Admin/AdminHome';
 import AdminLogin from '../Components/Admin/AdminLogin';
 import AddTeacher from '../pages/Admin/AddTeacher';
@@ -13,9 +13,16 @@ import { Route,Routes} from 'react-router-dom';
 
 function Admin() {
 
-  const isAuth=localStorage.getItem("admintoken")
-  
+  const[isAuth,setisAuth]=useState("")
 
+  useEffect(()=>{
+
+    const isAuth=localStorage.getItem("admintoken")
+    setisAuth(isAuth)
+  },[])
+
+  
+ 
   return (
     <div>
        <Routes>

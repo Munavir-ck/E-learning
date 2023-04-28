@@ -56,7 +56,7 @@ const List_bookings = () => {
 
   const handleOnclick = (teacherId) => {
     const room=id
-    console.log(teacherId);
+   
     socket.emit("room:join", { email,  room });
     dispatch(
       setTeacher({
@@ -163,7 +163,7 @@ const List_bookings = () => {
           let newObj = [];
 
           bookings.forEach((item) => {
-            console.log(item);
+           
             if (item._id === order_id) {
               console.log(3232323);
               if (item.slot._id === slot_id) {
