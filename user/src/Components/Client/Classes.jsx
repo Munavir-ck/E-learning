@@ -34,9 +34,7 @@ export default function Classes() {
     setVideoUrl("");
   };
 
-  const posts = [1, 2, 3, 4];
 
-  console.log(searchResult, 3333333333333);
   return (
     <div className={isLoading&&"pointer-events-none opacity-20"}>{isLoading&&<Spinner/>}
       <motion.div className=" w-full h-32  flex items-center justify-center ">
@@ -45,18 +43,19 @@ export default function Classes() {
           animate={{
             opacity: 1,
             fontSize: 50,
-            x: 50,
+            x: 30,
             y: -10,
             color: "#18355c",
+            textAlign:"center"
           }}
           transition={{ delay: 0.5, type: "spring", stiffness: 120 }}
         >
-          <h1 className="text-5xl font-semibold font-monospace">
-            Classes For Your Kids
+          <h1 className="text-5xl font-semibold font-monospace text-center">
+            Classes For Kids
           </h1>
         </motion.h2>
       </motion.div>
-      <div className="ml-20">
+      <div>
         <SearchClass setData={setSearchResult} setError={setError} />
       </div>
 

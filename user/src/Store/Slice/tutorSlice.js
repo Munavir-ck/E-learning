@@ -7,6 +7,7 @@ const tutorSlice=createSlice({
     email:null,
     _id:null,
     isLoggedIn: false,
+    token:null
    },
    reducers:{
     setTutor: (state, action) => {
@@ -14,6 +15,7 @@ const tutorSlice=createSlice({
         state.email = action.payload.email;
         state.tutor_id=action.payload.tutor_id
         state.isLoggedIn = true;
+        state.token=action.payload.token
       },
    }
 

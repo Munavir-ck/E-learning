@@ -70,11 +70,12 @@ function Login() {
                 _id:res.data.result._id,
                 image:res.data.result.image,
                 isLoggedIn: true,
+                token: res.data.token
               })
             );
             const student_id=res.data.result._id
             socket.emit('student:initial-connection',{student_id},student_id) 
-            //  console.log(someValue);
+         
             navigate("/");
           } else {
             setSubmit(false);

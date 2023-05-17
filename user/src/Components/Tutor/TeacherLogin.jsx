@@ -30,6 +30,7 @@ function TeacherLogin() {
             email: res.data.tutor.email,
             tutor_id: res.data.tutor._id,
             isLoggedIn: true,
+            token:res.data.token
           })
         );
         navigate("/tutor/profile");

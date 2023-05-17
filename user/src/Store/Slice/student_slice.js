@@ -8,6 +8,7 @@ const studentSlice=createSlice({
     _id:null,
     image:null,
     isLoggedIn: false,
+    token:null
    },
    reducers:{
     setStudent: (state, action) => {
@@ -16,6 +17,7 @@ const studentSlice=createSlice({
         state.image=action.payload.image;
         state._id=action.payload._id
         state.isLoggedIn = true;
+        state.token=action.payload.token
       },
       resetStudent: (state) => {
          state.name = null;
@@ -23,6 +25,7 @@ const studentSlice=createSlice({
          state._id = null;
          state.isLoggedIn = false;
          state.image=null
+         state.token=null
        },
    }
 

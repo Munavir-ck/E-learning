@@ -1,10 +1,9 @@
-
 import axios from "../../axios/axios";
 import React from "react";
 import { Fragment, useState, useEffect } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import {AiFillStar} from "react-icons/ai"
+import { AiFillStar } from "react-icons/ai";
 import {
   ChevronDownIcon,
   FunnelIcon,
@@ -17,8 +16,6 @@ import { Link } from "react-router-dom";
 import { BsFillChatFill } from "react-icons/bs";
 import SearchTeacher from "./Search/SearchTeacher";
 
-
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -28,13 +25,11 @@ function Booking() {
   const [teachers, setTeachers] = useState([]);
   const [error, setError] = useState(" ");
   const [subject, setSubject] = useState([]);
-  const[filter,setFilter]=useState(false)
+  const [filter, setFilter] = useState(false);
 
- const [filterdTeachers,setFilteredTeachers]=useState([])
+  const [filterdTeachers, setFilteredTeachers] = useState([]);
 
   const student_id = useSelector((state) => state.student._id);
-
-  
 
   const handleChange = (e) => {
     setSubject(e.target.value);
@@ -42,31 +37,24 @@ function Booking() {
 
   const handleCheckboxChange = (e) => {
     const value = e.target.value;
-    const id=e.target.id
+    const id = e.target.id;
 
     const isChecked = e.target.checked;
 
     if (isChecked) {
-      setCheckedValues([...checkedValues, {value,id}]);
+      setCheckedValues([...checkedValues, { value, id }]);
     } else {
       setCheckedValues(checkedValues.filter((item) => item.value !== value));
     }
   };
 
   useEffect(() => {
-   
     axios
-      .post(
-        `/filter_our_teacher`,
-        { checkedValues }
-       
-      )
+      .post(`/filter_our_teacher`, { checkedValues })
       .then((res) => {
-        // console.log(res.data);
         if (res.data.status) {
-        
-          setFilter(true)
-          setFilteredTeachers(res.data.result);
+          setFilter(true);
+          setTeachers(res.data.result);
         } else {
           setTeachers([]);
           setError(res.data.message);
@@ -77,27 +65,25 @@ function Booking() {
       });
   }, [checkedValues]);
 
- 
+  useEffect(() => {
+    if (checkedValues.length === 0) {
+      axios
+        .get("/get_teachers")
+        .then((res) => {
+          if (res.data.status) {
+            setTeachers(res.data.data);
+          } else {
+            setTeachers([]);
+            setError(res.data.message);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [checkedValues]);
 
   useEffect(() => {
-    axios
-      .get("/get_teachers")
-      .then((res) => {
-        if (res.data.status) {
-          setTeachers(res.data.data);
-        } else {
-          setTeachers([]);
-          setError(res.data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
-
-  useEffect(() => {
- 
-
     axios
       .get(
         `/get_subject`,
@@ -109,7 +95,6 @@ function Booking() {
         }
       )
       .then((res) => {
-      
         if (res.data.status) {
           setSubject(res.data.result);
         } else {
@@ -122,40 +107,48 @@ function Booking() {
   }, []);
 
   // console.log(subject,23232323);
-const classes=[1,2,3,4,5,6,7]
-const stars=[1,2,3,4,5]
+  const classes = [1, 2, 3, 4, 5, 6, 7];
+  const stars = [1, 2, 3, 4, 5];
   const filters = [
     {
       id: "subject",
       name: "subject",
       options: subject.map((item) => {
-        return { value: item.subject, label: item.subject, id: "subject", checked: false };
-    })
+        return {
+          value: item.subject,
+          label: item.subject,
+          id: "subject",
+          checked: false,
+        };
+      }),
     },
     {
       id: "class",
       name: "class",
-      options:classes.map((item,index) => {
+      options: classes.map((item, index) => {
         return { value: item, label: item, id: "class", checked: false };
-    })
+      }),
     },
     {
       id: "rating",
       name: "rating",
-      options:stars.map((item,index) => {
-        return { value: item, label:item , icon: <AiFillStar color="yellow" /> , id:"star",checked: false };
-    })
+      options: stars.map((item, index) => {
+        return {
+          value: item,
+          label: item,
+          icon: <AiFillStar color="yellow" />,
+          id: "star",
+          checked: false,
+        };
+      }),
     },
-    
   ];
- 
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-
   return (
     <div className="bg-white">
-      <SearchTeacher  setData={setTeachers} />
+      <SearchTeacher setData={setTeachers} />
       <div>
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -412,8 +405,8 @@ const stars=[1,2,3,4,5]
                                     htmlFor={`filter-${section.id}-${optionIdx}`}
                                     className="flex gap-2 ml-3 text-sm text-gray-600"
                                   >
-                                  {option.label} {option.icon && <> {option.icon} Above </>}
- 
+                                    {option.label}{" "}
+                                    {option.icon && <> {option.icon} Above </>}
                                   </label>
                                 </div>
                               ))}
@@ -422,7 +415,6 @@ const stars=[1,2,3,4,5]
                         </>
                       )}
                     </Disclosure>
-                   
                   </>
                 ))}
               </form>
@@ -430,15 +422,16 @@ const stars=[1,2,3,4,5]
               {/* Product grid */}
               <div className="lg:col-span-3">
                 <div className=" colo  grid gap-6 mt-10  text-center sm:grid-cols-2 m-8  md:grid-cols-3 ">
-                  {filterdTeachers.length!==0?filterdTeachers:teachers.map((items, key) => (
+                  {(filterdTeachers.length !== 0
+                    ? filterdTeachers
+                    : teachers
+                  ).map((items, key) => (
                     <Link to={`/teacher_details/${items._id}`}>
                       <div className="max-w-sm  overflow-hidden shadow-lg m-10 ">
                         <img
                           className="w-full h-5/4"
                           src={
-                            items.image
-                              ? items.image
-                              : "../../../avatar.png"
+                            items.image ? items.image : "../../../avatar.png"
                           }
                           alt="Sunset in the mountains"
                         />

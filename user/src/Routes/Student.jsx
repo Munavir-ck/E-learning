@@ -14,16 +14,13 @@ import ReservationPage from "../pages/Client/ReservationPage";
 import Profile_page from "../pages/Client/Profile_page";
 import { Navigate } from "react-router-dom";
 import ErrorPage from "../Components/Client/ErrorPage/ErrorPage";
+import { useSelector } from 'react-redux'
 
 function Student() {
 
-  const [isAuth,setisAuth]=useState("")
+const isAuth = useSelector(state => state.student.token);
 
-  useEffect(()=>{
 
-    const isAuth=localStorage.getItem("token")
-    setisAuth(isAuth)
-  })
 
 
   

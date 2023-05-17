@@ -96,22 +96,30 @@ function TeacherDetail() {
               src={teacher.image ? teacher.image : "../../../avatar.png"}
             />
             <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-              <h2 className="text-sm title-font text-gray-500 tracking-widest">
-                TEACHER NAME
-              </h2>
-              <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                {teacher.name}
-              </h1>
-              <div className=" mb-4">
-                <span className="flex pr-3 py-2 border-gray-200 gap-2">
-                  <h1>Subject:</h1>
-                  <h1 className="font-bold">{teacher.subject}</h1>
-                </span>
+            <div className="mb-4 bg-gray-100 rounded-lg p-6">
+                <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+                  <h2 className="text-sm text-gray-500 tracking-widest">
+                    TEACHER NAME
+                  </h2>
+                  <h1 className="text-gray-900 text-3xl font-medium mb-1">
+                    Jane Doe
+                  </h1>
+                  <div className="mb-4">
+                    <span className="flex pr-3 py-2 border-gray-200 gap-2">
+                      <h1 className="text-mycolors_b">Subject:</h1>
+                      <h1 className="font-bold">{teacher.subject}</h1>
+                    </span>
 
-                <span className="flex pr-3 py-2 border-gray-200 gap-2">
-                  <h1 className="decoration-green-600">Qualification:</h1>
-                  <h1 className="font-bold">{teacher.qualification}</h1>
-                </span>
+                    <span className="flex pr-3 py-2 border-gray-200 gap-2">
+                      <h1 className="text-mycolors_b">Qualification:</h1>
+                      <h1 className="font-bold">{teacher.qualification}</h1>
+                    </span>
+                    <span className="flex pr-3 py-2 border-gray-200 gap-2">
+                      <h1 className="text-mycolors_b">Class:</h1>
+                      <h1 className="font-bold">{teacher.class}</h1>
+                    </span>
+                  </div>
+                </div>
               </div>
               <span></span>
               <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5">
