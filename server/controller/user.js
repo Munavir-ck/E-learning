@@ -16,6 +16,7 @@ import Wallet from "../model/wallet.js";
 
 const signup = async (req, res) => {
   try {
+
     const { name, password, email, phone, address, city } = req.body.formValues;
     const Class = req.body.formValues.class;
     const user = await userDb.findOne({ email: email });
