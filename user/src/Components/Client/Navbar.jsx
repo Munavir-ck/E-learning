@@ -5,10 +5,10 @@ import { resetStudent} from '../../Store/Slice/student_slice';
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { User } from 'heroicons-react'
+
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import SearchTeacher from './Search/SearchTeacher';
+
 import { useNavigate } from 'react-router-dom';
 
 const navigation = [

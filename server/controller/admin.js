@@ -11,13 +11,17 @@ import Transaction from "../model/transaction.js";
 import orderDb from "../model/order.js";
 
 ffmpeg.setFfmpegPath(ffmpegPath.path);
+// import { spawn } from 'child_process';
 
+// import { path as ffprobePath } from '@ffprobe-installer/ffprobe';
 
 dotenv.config({ silent: process.env.NODE_ENV === "production" });
 
 const login = async (req, res) => {
   try {
     const { email, password } = req.body.formValues;
+
+    
    
     const adminMail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
@@ -27,62 +31,63 @@ const login = async (req, res) => {
         const token = jwt.sign({ adminMail }, process.env.JWT_SECRET_KEY, {
           expiresIn: 864000,
         });
-       
+        console.log(token);
 
         await Wallet.create({
           name: "Admin",
         });
-        res.status(200).json({ status: true, token: token, message: "login success" });
+        res.json({ status: true, token: token, message: "login success" });
       } else {
-        res.status(200).json({ status: false, message: "admin password is incorrect" });
+        res.json({ status: false, message: "admin password is incorrect" });
       }
     } else {
-      res.status(200).json({ status: false, message: "admin email is incorrect" });
+      res.json({ status: false, message: "admin email is incorrect" });
     }
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
 const add_teachers = async (req, res) => {
   try {
-   
+    console.log(req.body);
 
     const data = req.body.formValues;
     console.log(data);
     const teachers = await teacherDb
       .create(data)
       .then(() => {
-        
-        res.status(200).json({ status: true });
+        console.log(121212121212);
+        res.json({ status: true });
       })
       .catch((err) => {
-        res.status(200).json({ status: false, message: err });
+        res.json({ status: false, message: err });
       });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
 const get_teachers = async (req, res) => {
   try {
-   
+    console.log(1111111111112222);
+
     await teacherDb
       .find({})
       .then((data) => {
-        res.status(200).json({ status: true, data });
+        res.json({ status: true, data });
       })
       .catch((err) => {
-        res.status(200).json({ status: false, message: "error occured" });
+        res.json({ status: false, message: "error occured" });
       });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
 const upload_class = async (req, res) => {
   try {
-    
+   
     thumbsupply
       .generateThumbnail(req.file.path, {
         size: thumbsupply.ThumbSize.LARGE, // or ThumbSize.LARGE
@@ -102,18 +107,19 @@ const upload_class = async (req, res) => {
             description: req.body.description,
             class: req.body.class,
             subject: req.body.subject,
-            video_path: `https://e-learn-34bt.onrender.com${videoPath}`,
-            thumbnail_path: `https://e-learn-34bt.onrender.com${path}`,
+            video_path: `http://localhost:5001${videoPath}`,
+            thumbnail_path: `http://localhost:5001${path}`,
+          
           })
           .then((data) => {
-            res.status(200).json({ status: true, message: "Successfully added" });
+            res.json({ status: true, message: "Successfully added" });
           })
           .catch((err) => {
-            res.status(200).json({ status: false, message: "Somthing wrong" });
+            res.json({ status: false, message: "Somthing wrong" });
           });
       });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 
   //
@@ -127,7 +133,7 @@ const add_subject = async (req, res) => {
     })
     .then((data) => {
       console.log(data);
-      res.status(200).json({ status: true, result: data });
+      res.json({ status: true, result: data });
     })
     .catch((err) => {
       console.log(err);
@@ -136,7 +142,7 @@ const add_subject = async (req, res) => {
 
 const get_wallet = async (req, res) => {
   await Wallet.findOne({ name: "Admin" }).then((data) => {
-    res.status(200).json({ result: data });
+    res.json({ result: data });
   });
 };
 
@@ -147,7 +153,7 @@ const get_transactions = async (req, res) => {
     .sort({ createdAt: -1 })
     .then((data) => {
       console.log(data);
-      res.status(200).json({ result: data });
+      res.json({ result: data });
     });
 };
 
@@ -176,16 +182,16 @@ const share_profit = async (req, res) => {
         { $inc: { balance: -amount } }
       );
 
-      res.status(200).json({ status: true });
+      res.json({ status: true });
     });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
 const get_subject = async (req, res) => {
   await subjectDb.find({}).then((data) => {
-    res.status(200).json({ result: data });
+    res.json({ result: data });
   });
 };
 
@@ -220,7 +226,7 @@ const monthlylineChart = async (req, res) => {
       { $sort: { "_id.month": -1 } },
     ]);
 
-    
+    console.log(monthlyReports);
 
     let totalBooking = [];
     let bookingProfit = [];
@@ -238,7 +244,7 @@ const monthlylineChart = async (req, res) => {
       months.unshift(month);
     }
 
-    res.status(200).json({
+    res.json({
       status: true,
       totalBooking,
       bookingProfit,
@@ -246,14 +252,14 @@ const monthlylineChart = async (req, res) => {
       months,
     });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
     error.admin = true;
   }
 };
 const dailyReport = async (req, res) => {
   try {
 
-   
+    console.log(req.query);
 
     const {selectedDate}=req.query
     let date = new Date(selectedDate);
@@ -287,12 +293,12 @@ const dailyReport = async (req, res) => {
       const totalOrder = todayBooking[0].count;
       const totalSlot = todayBooking[0].slots;
 
-      res.status(200).json({ status: true, totalAmount, totalOrder, totalSlot });
+      res.json({ status: true, totalAmount, totalOrder, totalSlot });
     } else {
-      res.status(200).json({ status: true, totalAmount: 0, totalOrder: 0, totalSlot: 0 });
+      res.json({ status: true, totalAmount: 0, totalOrder: 0, totalSlot: 0 });
     }
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
@@ -308,8 +314,8 @@ const pieChart = async (req, res) => {
       },
     ]);
 
-  
-    res.status(200).json(result);
+    console.log(result);
+    res.json(result);
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server Error");

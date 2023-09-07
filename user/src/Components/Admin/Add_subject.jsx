@@ -13,7 +13,6 @@ import {ToastContainer,toast} from "react-toastify"
 
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
-import { add_subject } from "../../API/adminReq";
 
 const filters = [
   {
@@ -56,9 +55,20 @@ function Add_subject() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    add_subject(checkedValues,subject) 
-    .then((res)=>{
-    toast.success("success") 
+    axios.post(
+      "/admin/add_subject",
+      {
+        checkedValues,
+        subject,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("admintoken"),
+        },
+      }
+    ).then((res)=>{
+    toast.success("success")
+   
     navigate("/admin/add_subject")
     }).catch((err)=>{
         toast.error("error")

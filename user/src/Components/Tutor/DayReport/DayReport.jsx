@@ -3,7 +3,6 @@ import axios from "../../../axios/axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "tailwindcss/tailwind.css";
-import { get_report } from "../../../API/tutor.Req";
 
 function DayReport() {
   const [todayTotal, setTodayTotal] = useState(0);
@@ -12,8 +11,16 @@ function DayReport() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
-    
-    get_report(selectedDate)
+    axios
+      .get("/tutor/get_report", {
+        headers: {
+          Authorization: localStorage.getItem("tutortoken"),
+        },
+
+        params: {
+          selectedDate,
+        },
+      })
       .then((res) => {
         console.log(res.data);
         setTodayTotal(res.data.totalAmount);

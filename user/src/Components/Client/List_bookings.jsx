@@ -16,7 +16,6 @@ import { useSocket } from "../../contex/socketProvider";
 import { setTeacher } from "../../Store/Slice/teacherSlice";
 import Pagination from "./Pagination/Pagination";
 import Spinner from "./Spinner/Spinner";
-import { get_bookings } from "../../API/userReq";
 
 const List_bookings = () => {
   const dispatch = useDispatch();
@@ -68,7 +67,7 @@ const List_bookings = () => {
     notification && toast.error("ready");
   };
 
-  
+  console.log(notification, "my notify");
 
   const handleNotification = (data) => {
     setNotification(true);
@@ -130,10 +129,15 @@ const List_bookings = () => {
     future_hours.toString().padStart(2, "0") +
     ":" +
     future_minutes.toString().padStart(2, "0");
- 
+  console.log(future_time, "future");
   useEffect(() => {
     setLoading(true)
-    get_bookings()
+    axios
+      .get("/get_bookings", {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      })
       .then((res) => {
         setLoading(false)
         setBookings(res.data.result);
@@ -142,7 +146,16 @@ const List_bookings = () => {
 
   const handleActions = (slot_id, order_id) => {
     setLoading(true)
-   cancel_booking(slot_id,order_id)
+    axios
+      .post(
+        "/cancel_booking",
+        { slot_id, order_id },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      )
       .then((res) => {
         setLoading(false)
         if (res.data.status) {
@@ -219,14 +232,14 @@ const List_bookings = () => {
                       <img
                         className="rounded-full w-14"
                         src={
-                          item?.teacher
+                          item.teacher
                             ? item.teacher[0].image
                             : "../../../avatar.png"
                         }
                       />
                       <div className="ml-4">
                         <span className="capitalize block text-gray-800 font-semibold">
-                          {item?.teacher[0].name}
+                          {item.teacher[0].name}
                         </span>
                         <span className="text-sm block text-gray-600">
                           {item.teacher[0].subject}
@@ -236,7 +249,7 @@ const List_bookings = () => {
                   </div>
                   <div className="w-1/4">
                     <span className="capitalize w-10 text-white bg-green-800 rounded-md text-sm">
-                      {item?.slot.endTime}--{item?.slot.startTime}
+                      {item.slot.endTime}--{item.slot.startTime}
                     </span>
                   </div>
                   <div className="w-1/4">
@@ -247,21 +260,21 @@ const List_bookings = () => {
                   </div>
                   <div className="w-1/4">
                     <span className="text-gray-600 text-sm font-semibold">
-                      {item?.slot.booking_status}
+                      {item.slot.booking_status}
                     </span>
                   </div>
                   <div className="w-1/4">
-                    <span className="text-gray-600 text-sm">{item?.amount}</span>
+                    <span className="text-gray-600 text-sm">{item.amount}</span>
                   </div>
                   <div className="w-1/4">
                     <span className="text-gray-600 text-sm flex justify-between">
                       {" "}
-                      {item?.slot.booking_status === "Cancelled" ? (
+                      {item.slot.booking_status === "Cancelled" ? (
                         <div></div>
-                      ) : time > item?.slot.startTime &&
+                      ) : time > item.slot.startTime &&
                         time < item.slot.endTime ? (
                         <button
-                          onClick={() => handleOnclick(item?.teacher[0]._id)}
+                          onClick={() => handleOnclick(item.teacher[0]._id)}
                           className="bg-red-600"
                         >
                           <FcVideoCall size={30} />
@@ -269,7 +282,7 @@ const List_bookings = () => {
                       ) : (
                         <button
                           className="hover:bg-zinc-700"
-                          onClick={() => handleActions(item?.slot._id, item._id)}
+                          onClick={() => handleActions(item.slot._id, item._id)}
                           //   data-id={item.slot._id}
                           //   data-order_id={item._id}
                           //   data-value="decline"
@@ -279,7 +292,7 @@ const List_bookings = () => {
                       )}
                       <button
                         onClick={() =>
-                          handlechat(item?.student, item?.teacher[0]._id)
+                          handlechat(item.student, item.teacher[0]._id)
                         }
                       >
                         <BsFillChatFill size={30} color="blue" />

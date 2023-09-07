@@ -19,12 +19,12 @@ const googleAuthTutor = async (req, res) => {
       const token = jwt.sign({ ID }, process.env.JWT_SECRET_KEY, {
         expiresIn: 3000,
       });
-      res.status(200).json({ status: true, token: token, tutor, message: "login success" });
+      res.json({ status: true, token: token, tutor, message: "login success" });
     } else {
-      res.status(200).json({ status: false, message: "email is not registered" });
+      res.json({ status: false, message: "email is not registered" });
     }
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
@@ -33,13 +33,13 @@ const get_profile = async (req, res) => {
     await teacherDb
       .find({ email: "munavirokv@gmail.com" })
       .then((data) => {
-        res.status(200).json({ data });
+        res.json({ data });
       })
       .catch((err) => {
         console.log(err);
       });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
@@ -61,13 +61,13 @@ const edit_profile_image = async (req, res) => {
     await teacherDb
       .findOneAndUpdate({ _id: ID }, { image: result.secure_url })
       .then((data) => {
-        res.status(200).json({ status: true, data });
+        res.json({ status: true, data });
       })
       .catch((err) => {
         console.log(err);
       });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
@@ -78,11 +78,11 @@ const create_slot = async (req, res) => {
   await teacherDb
     .findOneAndUpdate({ _id: ID }, { $push: { slot: data } })
     .then((data) => {
-      res.status(200).json({ status: true });
+      res.json({ status: true });
      
     })
     .catch((err) => {
-      res.status(200).json({ status: false });
+      res.json({ status: false });
       console.log(err);
     });
 };
@@ -96,11 +96,11 @@ const get_slot = async (req, res) => {
     .then((data) => {
      
       const result = data.slot;
-      res.status(200).json({ status: true, result });
+      res.json({ status: true, result });
     })
     .catch((err) => {
       console.log(err);
-      res.status(200).json({ status: false });
+      res.json({ status: false });
     });
 };
 
@@ -134,10 +134,10 @@ const get_bookings = async (req, res) => {
       },
     ]);
 
-    res.status(200).json({ status: true, result: data });
+    res.json({ status: true, result: data });
     console.log(data);
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
@@ -156,7 +156,7 @@ const booking_actions = async (req, res) => {
       );
      
 
-      res.status(200).json({ status: true });
+      res.json({ status: true });
     } catch (error) {
       console.log(error);
     }
@@ -171,7 +171,7 @@ const booking_actions = async (req, res) => {
       { $set: { "slot.$.booking_status": "boocked" } }
     );
 
-    res.status(200).json({ status: true });
+    res.json({ status: true });
   }
 };
 
@@ -187,13 +187,13 @@ const create_chat = async (req, res) => {
       })
       .then((data) => {
         console.log(data);
-        res.status(200).json({ result: data });
+        res.json({ result: data });
       })
       .catch((err) => {
         console.log(err);
       });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
@@ -220,16 +220,16 @@ const get_messages = async (req, res) => {
       return a.createdAt - b.createdAt;
     });
 
-    res.status(200).json({ result: result });
+    res.json({ result: result });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log(error);
   }
 };
 
 const get_chat_reciever = async (req, res) => {
   const { student } = req.query;
   await studentDb.findById(student).then((data) => {
-    res.status(200).json({ result: data });
+    res.json({ result: data });
   });
 };
 
@@ -258,10 +258,8 @@ const get_monthlylineChart = async (req, res) => {
     ]);
   console.log( "_id.month");
     console.log(monthlyReport);
-    res.status(200).json({result:monthlyReport});
-  } catch (err) {
-    res.status(500).send("Internal Server Error");
-  }
+    res.json({result:monthlyReport});
+  } catch (err) {}
 };
 
 const dailyReport = async (req, res) => {
@@ -308,13 +306,12 @@ const dailyReport = async (req, res) => {
       const totalOrder =todayBooking[0].count;
       const totalSlot = todayBooking[0].slots;
 
-      res.status(200).json({ status: true, totalAmount, totalOrder, totalSlot });
+      res.json({ status: true, totalAmount, totalOrder, totalSlot });
     } else {
-      res.status(200).json({ status: true, totalAmount: 0, totalOrder: 0, totalSlot: 0 });
+      res.json({ status: true, totalAmount: 0, totalOrder: 0, totalSlot: 0 });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -324,7 +321,7 @@ const get_wallet=async(req,res)=>{
 await teacherDb.findOne({_id:ID}).then((data)=>{
  
   const wallet=data.wallet
-  res.status(200).json({wallet})
+  res.json({wallet})
 })
 
 

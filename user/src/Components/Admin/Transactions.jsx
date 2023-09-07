@@ -3,24 +3,28 @@ import axios from "../../axios/axios";
 import { ToastContainer, toast } from "react-toastify";
 import moment from "moment";
 import ShareProfit from "./ModalShareProfit/ShareProfit";
-import { get_transction } from "../../API/adminReq";
 function Transactions() {
   const [modal, setModal] = useState(false);
   const [teacher, setTeacher] = useState({});
   const [transaction, setTransaction] = useState([]);
   const [transaction_id, setTransaction_id] = useState(null);
- 
+  console.log(modal);
 
   const handleOnClick = (teachersD, transactionId) => {
-
+    console.log(5555555, teachersD);
     setModal(!modal);
     setTeacher(teachersD);
     setTransaction_id(transactionId);
   };
 
+  console.log(transaction, 22323232);
+  console.log(teacher);
 
   useEffect(() => {
-    get_transction()
+    axios
+      .get("/admin/get_transction", {
+        headers: { Authorization: localStorage.getItem("admintoken") },
+      })
       .then((res) => {
         const list = res.data.result;
         console.log(list);

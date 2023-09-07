@@ -3,7 +3,6 @@ import axios from "../../axios/axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "tailwindcss/tailwind.css";
-import { get_dailyReport } from "../../API/adminReq";
 
 function AdminData() {
   const [todayTotal, setTodayTotal] = useState(null);
@@ -12,8 +11,15 @@ function AdminData() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
-   
-    get_dailyReport()
+    axios
+      .get("/admin/get_dailyReport", {
+        params: {
+          selectedDate,
+        },
+        headers: {
+          Authorization: localStorage.getItem("admintoken"),
+        },
+      })
       .then((res) => {
         console.log(res.data);
         setTodayTotal(res.data.totalAmount);

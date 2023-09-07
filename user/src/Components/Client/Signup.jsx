@@ -4,8 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "./Spinner/Spinner";
-import { signup } from "../../API/userReq";
-import { get_otp, verify_otp } from "../../API/userReq";
 
 const Signup = () => {
   const initialValues = {
@@ -30,8 +28,11 @@ const Signup = () => {
   const handleOtp = async () => {
     const number = formValues.phone;
     setOtp(true);
-    get_otp(number)
-      
+    await axios
+      .post("/get_otp", {
+        number,
+      })
+      .then((res) => {});
   };
 
   const handleChangeotp = (e) => {
@@ -39,12 +40,15 @@ const Signup = () => {
     setStoreotp(OTP);
   };
 
-  
-
   const submitOtp = () => {
-   
+    console.log(111111111111);
+
     const number = formValues.phone;
-    verify_otp(number,storeOTP)
+    axios
+      .post("/verify_otp", {
+        storeOTP,
+        number,
+      })
       .then((res) => {
         if (res.data.status) {
           toast.success(res.data.message);
@@ -60,7 +64,7 @@ const Signup = () => {
    
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
-    
+    console.log(formValues);
   };
 
   const handleSubmit = (e) => {
@@ -70,9 +74,16 @@ const Signup = () => {
     if (isCheck) {
       if (Object.keys(formErrors).length === 0 && isSubmit) {
         setLoading(true)
-
-        signup(formValues)
-       
+        axios
+          .post("/signup", {
+            name: formValues.name,
+            password: formValues.password,
+            email: formValues.email,
+            phone: formValues.phone,
+            Class: formValues.class,
+            city:formValues.city,
+            address:formValues.address
+          })
           .then((res) => {
            
             if (res.data.status) {
@@ -132,7 +143,7 @@ const Signup = () => {
 
     return errors;
   };
-  
+  useEffect(() => {}, [formErrors]);
 
   return (
     <div class={`min-h-screen p-6 bg-gray-100 flex items-center justify-center ${isLoading&&"pointer-events-none opacity-20"}`}> {isLoading&&<Spinner/>}
@@ -214,14 +225,14 @@ const Signup = () => {
                           type="tel"
                         />
 
-                        <div
+                        <button
                           onClick={handleOtp}
                           tabindex="-1"
                           for="show_more"
                           class="cursor-pointer outline-none focus:outline-none border-l border-gray-200 transition-all text-gray-300 hover:text-blue-600"
                         >
                           OTP
-                        </div>
+                        </button>
                       </div>
                       {otp && formValues.phone ? (
                         <div className="relative">

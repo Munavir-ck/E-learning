@@ -7,6 +7,10 @@ import "react-toastify/dist/ReactToastify.css";
 import ProgressBar from "./ProgressBAr/ProgressBar";
 
 function UploadClass() {
+  // const initialState={
+  //     selectedVideos:null,
+  //     loaded:0
+  // }
   const [selectedVideos, setSelectedVideos] = useState(null);
 
   const [loaded, Setloading] = useState(0);
@@ -26,6 +30,7 @@ function UploadClass() {
     setDescription(e.target.value);
   };
   const maxSelectFile = (event) => {
+    console.log(22222222);
     const files = event.target.files;
 
     if (files.length > 1) {
@@ -66,7 +71,7 @@ function UploadClass() {
     e.preventDefault();
     console.log(validation());
     if (validation() == false) {
-    
+      console.log(33333333);
       toast.error("No files");
     } else {
       const data = new FormData();
@@ -94,7 +99,7 @@ function UploadClass() {
           }
         })
         .catch((err) => {
-      
+          console.log(4444444444);
           toast.error("error");
         });
     }

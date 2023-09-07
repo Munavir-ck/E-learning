@@ -1,18 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import axios from "../../../axios/axios";
-import { get_monthlylineChart } from "../../../API/tutor.Req";
 
 const Linechart = () => {
   const chartRef = useRef(null);
   const [data, setData] = useState([]);
 
 
-
+  console.log(data,"data");
 
   useEffect(() => {
-    
-    get_monthlylineChart()
+    axios
+      .get("/tutor/get_monthlylineChart", {
+        headers: {
+          Authorization: localStorage.getItem("tutortoken"),
+        },
+      })
       .then((res) => {
         
         setData(res.data.result);
