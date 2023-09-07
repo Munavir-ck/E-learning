@@ -11,7 +11,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import ModalSuccess from "./Modal/ModalSuccess";
 import Spinner from "./Spinner/Spinner";
-import { filter_slot, getReservation } from "../../API/userReq";
 
 function Reservation() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -22,9 +21,13 @@ function Reservation() {
   const [filterdSlot, setFiltersSlot] = useState([]);
   const [checkedValues, setCheckedValues] = useState([]);
   const [submit, setSubmit] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading,setLoading]=useState(false)
+
+  
 
   const [modal, setmodal] = useState(false);
+
+
 
   let { id } = useParams();
 
@@ -48,6 +51,8 @@ function Reservation() {
     }
   };
 
+
+
   const customStyles = {
     content: {
       top: "50%",
@@ -70,10 +75,18 @@ function Reservation() {
   };
 
   useEffect(() => {
-    setLoading(true);
-   getReservation(id)
+    setLoading(true)
+    axios
+      .get("/reservation_page", {
+        params: {
+          id,
+        },
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      })
       .then((res) => {
-        setLoading(false);
+        setLoading(false)
         setTeacher(res.data.result);
       })
       .catch((err) => {});
@@ -83,9 +96,23 @@ function Reservation() {
     const date = new Date();
     let currentDate = new Date(date.setUTCHours(0, 0, 0, 0));
     if (selectedDate >= currentDate) {
-     filter_slot(id,selectedDate)
+      axios
+        .post(
+          "/filter_slot",
+          {
+            id,
+            selectedDate,
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem("token"),
+            },
+          }
+        )
         .then((res) => {
           if (res.data.status) {
+          
+
             setFiltersSlot(res.data.result[0].slots);
           } else {
             setFiltersSlot([]);
@@ -98,8 +125,7 @@ function Reservation() {
   }, [selectedDate]);
 
   return (
-    <div className={isLoading && "pointer-events-none opacity-70"}>
-      {isLoading && <Spinner />}
+    <div className= {isLoading&&"pointer-events-none opacity-20"}>{isLoading&&<Spinner/>}
       <div className="flex">
         <div className="w-screen">
           <ToastContainer />
@@ -108,7 +134,7 @@ function Reservation() {
               Book Your Teacher
             </h1>
             <p className="mt-6 text-lg text-white">
-              {/* Get an appointment with our experienced accountants */}
+              Get an appointment with our experienced accountants
             </p>
             <img
               className="absolute top-0 left-0 -z-10 h-full w-full object-cover"
@@ -120,7 +146,7 @@ function Reservation() {
           <div className="mx-auto grid max-w-screen-lg px-6 pb-20">
             <div className="">
               <p className="font-serif text-xl font-bold text-blue-900">
-              
+                Select a service
               </p>
               <div className="mt-4 grid max-w-3xl gap-x-4 gap-y-3 sm:grid-cols-2 md:grid-cols-3">
                 <div className="relative ">
@@ -133,7 +159,7 @@ function Reservation() {
                       <img
                         className=" object-cover"
                         src={
-                          teacher?.image ? teacher.image : "../../../avatar.png"
+                          teacher.image ? teacher.image : "../../../avatar.png"
                         }
                         alt=""
                       />
@@ -144,30 +170,33 @@ function Reservation() {
                 {modal && <ModalSuccess modal={modal} setModal={setmodal} />}
                 <span className="absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white peer-checked:border-emerald-400"></span>
 
-                <div className="max-w-md mx-auto">
-                  <div className="bg-white shadow-md rounded-lg ">
-                    <div className="p-6">
-                      <h2 className="text-2xl font-bold mb-4">{teacher?.name}</h2>
-                      <label
-                        className="flex h-full cursor-pointer flex-col rounded-lg p-4 shadow-lg bg-mycolors text-white"
-                        htmlFor="radio_2"
-                      >
-                        <h1 className="font-sans mt-2">
-                         class:
-                          <span className="mt-2 font-medium ml-2">{teacher?.class}</span>
-                        </h1>
-                        <h1 className="font-sans mt-4">
-                          Email:
-                          <span className="mt-2 font-medium ml-2">{teacher?.subject}</span>
-                        </h1>
-                        <h1 className="font-sans mt-4">
-                          Phone:
-                          <span className="mt-2 font-medium ml-2">{teacher?.qualification}</span>
-                        </h1>
-                      </label>
-                    </div>
+                <label
+                  className="flex h-full cursor-pointer flex-col rounded-lg p-4 shadow-lg shadow-slate-100 peer-checked:bg-mycolors peer-checked:text-white"
+                  for="radio_2"
+                >
+                  <h1 className="font-sans mt-5">
+                    {" "}
+                    Name :
+                    <span className="mt-2 font-medium">{teacher.name}</span>
+                  </h1>
+                  <span className="text-xs uppercase">{teacher.class}</span>
+                  <h1 className="font-sans mt-5">
+                    {" "}
+                    Sub :
+                    <span className="text-xs uppercase font-bold">
+                      {teacher.subject}
+                    </span>
+                  </h1>
+
+                  <div className="gap-2 mt-5">
+                    <span className="font-bold decoration-green-300">
+                      FEE :
+                    </span>
+                    <span class="title-font font-medium text-2xl text-gray-900">
+                      {teacher.FEE}
+                    </span>
                   </div>
-                </div>
+                </label>
 
                 <div className="relative"></div>
               </div>
@@ -198,8 +227,7 @@ function Reservation() {
                     <div>
                       <div
                         class={`flex items-center mb-4 gap-2 border-2 bg-mycolors hover:bg-mycolors_b ${
-                          item.booking_status === "boocked" &&
-                          "pointer-events-none opacity-50"
+                          item.booking_status === "boocked" && "pointer-events-none opacity-50"
                         } `}
                       >
                         <input

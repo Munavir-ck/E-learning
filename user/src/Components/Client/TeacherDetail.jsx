@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import axios from "../../axios/axios";
 import moment from "moment";
 import Spinner from "./Spinner/Spinner";
-import {getReviwes, getTeachersDetails } from "../../API/userReq";
 
 function TeacherDetail() {
   const [teacher, setTeacher] = useState({});
@@ -51,24 +50,34 @@ function TeacherDetail() {
       }
     }
   }
-
+  
   const { id } = useParams();
-
-  const getTeacher = async () => {
-    const res = await getTeachersDetails(id);
-    setTeacher(res.data.result);
-  };
-  const getReview = () => {
-     getReviwes(id).then((res) => {
-      setReviews(res.data?.result);
-      setLoading(false);
-    });
-  };
 
   useEffect(() => {
     setLoading(true);
-    getTeacher();
-    getReview();
+
+    axios
+      .get("/get_teacherDetails", {
+        params: {
+          id,
+        },
+      })
+      .then((res) => {
+        setTeacher(res.data.result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    axios
+      .get("/get_reviews", {
+        params: {
+          id,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        setReviews(res.data.result);
+      });
   }, []);
 
   return (
@@ -87,30 +96,22 @@ function TeacherDetail() {
               src={teacher.image ? teacher.image : "../../../avatar.png"}
             />
             <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-              <div className="mb-4 bg-gray-100 rounded-lg p-6">
-                <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-                  <h2 className="text-sm text-gray-500 tracking-widest">
-                    TEACHER NAME
-                  </h2>
-                  <h1 className="text-gray-900 text-3xl font-medium mb-1">
-                    {teacher.name}
-                  </h1>
-                  <div className="mb-4">
-                    <span className="flex pr-3 py-2 border-gray-200 gap-2">
-                      <h1 className="text-mycolors_b">Subject:</h1>
-                      <h1 className="font-bold">{teacher.subject}</h1>
-                    </span>
+              <h2 className="text-sm title-font text-gray-500 tracking-widest">
+                TEACHER NAME
+              </h2>
+              <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
+                {teacher.name}
+              </h1>
+              <div className=" mb-4">
+                <span className="flex pr-3 py-2 border-gray-200 gap-2">
+                  <h1>Subject:</h1>
+                  <h1 className="font-bold">{teacher.subject}</h1>
+                </span>
 
-                    <span className="flex pr-3 py-2 border-gray-200 gap-2">
-                      <h1 className="text-mycolors_b">Qualification:</h1>
-                      <h1 className="font-bold">{teacher.qualification}</h1>
-                    </span>
-                    <span className="flex pr-3 py-2 border-gray-200 gap-2">
-                      <h1 className="text-mycolors_b">Class:</h1>
-                      <h1 className="font-bold">{teacher.class}</h1>
-                    </span>
-                  </div>
-                </div>
+                <span className="flex pr-3 py-2 border-gray-200 gap-2">
+                  <h1 className="decoration-green-600">Qualification:</h1>
+                  <h1 className="font-bold">{teacher.qualification}</h1>
+                </span>
               </div>
               <span></span>
               <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5">
@@ -169,7 +170,7 @@ function TeacherDetail() {
           </a>
           <div className="flex">
             {reviews.length !== 0 &&
-              reviews.map((item, index) => {
+              reviews.map((item,index) => {
                 return (
                   <div className="mb-2 shadow-lg rounded-t-8xl rounded-b-5xl overflow-hidden h-60 w-2/5">
                     <div className="pt-3 pb-3 md:pb-1 px-4 md:px-16 bg-white bg-opacity-40">
@@ -177,47 +178,52 @@ function TeacherDetail() {
                         <img
                           className="mr-6 w-10 h-10 rounded-md"
                           src={item.student && item.student.image}
-                          alt="profile"
+                          alt=""
                         />
                         <h4 className="w-full md:w-auto text-xl font-heading font-medium">
                           {item.student.name}
                         </h4>
                         <div className="w-full md:w-px h-2 md:h-8 mx-8 bg-transparent md:bg-gray-200"></div>
                         <span className="mr-4 text-xl font-heading font-medium">
-                          {item.rating}
+                        {item.rating}
                         </span>
                         <div className="inline-flex">
-                          {console.log(totalSatrs, "______________,,,, mr-1")}
+                       {console.log(totalSatrs, "______________,,,, mr-1")}
                           {totalSatrs.map((item, i) => {
-                            if (i === index) {
-                              return item.map((star, j) => {
-                                console.log(item.length);
+                        
+                            if(i===index){
 
-                                console.log(item, "inline-block,,,,, mr-1");
-                                return (
-                                  <a
-                                    className="inline-block mr-1"
-                                    href="#"
-                                    key={j}
-                                  >
-                                    <svg
-                                      aria-hidden="true"
-                                      className={`w-5 h-5 ${
-                                        star.color
-                                          ? "text-yellow-400"
-                                          : "text-gray-300"
-                                      }`}
-                                      fill="currentColor"
-                                      viewBox="0 0 20 20"
-                                      xmlns="http://www.w3.org/2000/svg"
+
+                              return item.map((star, j) => {
+                                console.log(item.length)
+                             
+                                  console.log(item, "inline-block,,,,, mr-1");
+                                  return (
+                                    <a
+                                      className="inline-block mr-1"
+                                      href="#"
+                                      key={j}
                                     >
-                                      <title>{`Star ${j + 1}`}</title>
-                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                    </svg>
-                                  </a>
-                                );
+                                      <svg
+                                        aria-hidden="true"
+                                        className={`w-5 h-5 ${
+                                          star.color
+                                            ? "text-yellow-400"
+                                            : "text-gray-300"
+                                        }`}
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <title>{`Star ${j + 1}`}</title>
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                      </svg>
+                                    </a>
+                                  );
+                                
                               });
                             }
+
                           })}
                         </div>
                       </div>
