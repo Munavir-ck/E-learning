@@ -13,7 +13,7 @@ const Linechart = () => {
   const [data, setData] = useState([]);
 
 
-console.log(data,"sjhdgajhkdfgasdjhf");
+
 
 
   function MonthName(num) {
@@ -51,7 +51,6 @@ console.log(data,"sjhdgajhkdfgasdjhf");
 
     const months=data&&data.map((x) =>  MonthName(x._id.month))
 
-    console.log(months,"bar");
 
     const chartInstance = new Chart(chartRef.current, {
       type: "bar",

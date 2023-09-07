@@ -3,6 +3,7 @@ import Slot from "../../Components/Tutor/Slot";
 import axios from "../../axios/axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { create_slot } from "../../API/tutor.Req";
 
 function Time_mange() {
   const initialState = { date: "", endTime: "", startTime: "" };
@@ -23,13 +24,8 @@ function Time_mange() {
 
     if (Object.keys(formErrors).length == 0) {
 
-        axios.post("/tutor/create_slot",{
-            formValues
-        }, { headers: {
-            Authorization: localStorage.getItem('tutortoken')
-          }
-         
-        }).then((res)=>{
+       create_slot(formValues)
+      .then((res)=>{
             if(res.data.status){
                 toast.success('success')
                 setSubmit(true)
@@ -60,8 +56,7 @@ function Time_mange() {
     if (!values.endTime) {
       errors.endTime = "End Time is required";
       toast.error( "End Time is required")
-      // } else if (regex.test(values.email)) {
-      //   errors.email = "This is not a valid email format";
+     
     }
     if (!values.startTime) {
       errors.startTime = "Start Time is required";

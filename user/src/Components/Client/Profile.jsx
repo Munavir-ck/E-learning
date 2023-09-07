@@ -6,6 +6,7 @@ import Spinner from "./Spinner/Spinner";
 import { useDispatch } from "react-redux";
 import { setStudent } from "../../Store/Slice/student_slice";
 import "./profile.css";
+import { edit_profile_image, get_profile } from "../../API/userReq";
 
 
 function Profile() {
@@ -35,19 +36,8 @@ function Profile() {
         setLoading(true)
         const imgBase = await toBase64(image);
       
-        setImage();
-        axios
-          .post(
-            "/edit_profile_image",
-            {
-              imgBase,
-            },
-            {
-              headers: {
-                Authorization: localStorage.getItem("token"),
-              },
-            }
-          )
+        setImage(null);
+        edit_profile_image(imgBase)
           .then((res) => {
             setLoading(false)
             toast.success("success");
@@ -60,6 +50,7 @@ function Profile() {
                 email: student.email,
                 isLoggedIn: true,
                 _id: student._id,
+                token:  localStorage.getItem("token")
               })
             );
          
@@ -76,12 +67,7 @@ function Profile() {
 
   useEffect(() => {
     setLoading(true)
-    axios
-      .get("/get_profile", {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      })
+    get_profile()
       .then((res) => {
         setLoading(false)
         if (res.data.status) {
@@ -122,12 +108,12 @@ function Profile() {
                 <div className="image overflow-hidden">
                   <img
                     className="h-auto w-full mx-auto"
-                    src={student.image ? student.image : "../../../userprofile.jpg"} 
+                    src={student?.image ? student?.image : "../../../userprofile.jpg"} 
                     alt=""
                   />
                 </div>
                 <h1 className="text-gray-900 font-bold text-xl leading-8 my-1">
-                 {student.name}
+                 {student?.name}
                 </h1>
                
                 <ul className="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
@@ -189,7 +175,7 @@ function Profile() {
                   <div className="grid md:grid-cols-2 text-sm">
                     <div className="grid grid-cols-2">
                       <div className="px-4 py-2 font-semibold">First Name</div>
-                      <div className="px-4 py-2"> {student.name}</div>
+                      <div className="px-4 py-2"> {student?.name}</div>
                     </div>
                     
                     <div className="grid grid-cols-2">
@@ -198,7 +184,7 @@ function Profile() {
                     </div>
                     <div className="grid grid-cols-2">
                       <div className="px-4 py-2 font-semibold">Contact No.</div>
-                      <div className="px-4 py-2"> {student.phone}</div>
+                      <div className="px-4 py-2"> {student?.phone}</div>
                     </div>
                     
                     <div className="grid grid-cols-2">
@@ -206,20 +192,20 @@ function Profile() {
                         Permanant Address
                       </div>
                       <div className="px-4 py-2">
-                       {student.address},{student.city}
+                       {student?.address},{student.city}
                       </div>
                     </div>
                     <div className="grid grid-cols-2">
                       <div className="px-4 py-2 font-semibold">Email.</div>
                       <div className="px-4 py-2">
                         <a className="text-blue-800" href="mailto:jane@example.com">
-                         {student.email}
+                         {student?.email}
                         </a>
                       </div>
                     </div>
                     <div className="grid grid-cols-2">
                       <div className="px-4 py-2 font-semibold">Class</div>
-                      <div className="px-4 py-2">{student.className}</div>
+                      <div className="px-4 py-2">{student?.className}</div>
                     </div>
                   </div>
                 </div>

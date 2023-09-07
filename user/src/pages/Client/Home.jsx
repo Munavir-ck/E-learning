@@ -12,7 +12,7 @@ function Home() {
      <Navbar/>
      <Banner/>
      <Classes/>
-     <Teachers/>
+   
      <Footer/>
     </div>
   )

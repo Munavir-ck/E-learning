@@ -1,8 +1,8 @@
-import axios from "../../axios/axios";
+
 import React, { useEffect, useState } from "react";
-import { Fragment } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { add_teachers, get_subject } from "../../API/adminReq";
 function AddTeachers() {
   const initialValues = {
     email: "",
@@ -20,22 +20,16 @@ function AddTeachers() {
   console.log(formValues);
 
   useEffect(() => {
-    axios.get("/admin/get_subject",{ headers: {
-      Authorization: localStorage.getItem("admintoken"),
-    }}).then((res) => {
+    get_subject()
+    .then((res) => {
       setSubject(res.data.result);
     });
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formValues);
-    axios
-      .post("/admin/add_teachers", {
-        formValues,
-      },{ headers: {
-        Authorization: localStorage.getItem("admintoken"),
-      }},)
+    
+     add_teachers(formValues)
       .then((res) => {
         if (res.data.status) {
           toast.success("Success");
@@ -47,8 +41,7 @@ function AddTeachers() {
   };
 
   const handleChange = (e) => {
-    console.log(4545454545454);
-    console.log(e.target.value);
+  
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };

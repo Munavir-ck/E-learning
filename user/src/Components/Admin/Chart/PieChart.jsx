@@ -1,38 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import axios from "../../../axios/axios";
+import { get_piechart } from "../../../API/adminReq";
 
 const PieChart = () => {
   const chartRef = useRef(null);
   const [pieChartData, setPiechartData] = useState([]);
 
-  useEffect(()=>{
-    axios.get("/admin/get_piechart",{ headers: {
-        Authorization: localStorage.getItem("admintoken"),
-      }}).then((res) => {
-        setPiechartData(res.data);
-      })
-  },[])
+  useEffect(() => {
+    get_piechart().then((res) => {
+      setPiechartData(res.data);
+    });
+  }, []);
 
   useEffect(() => {
-  
-
-
-
-
     const chartInstance = new Chart(chartRef.current, {
       type: "pie",
       data: {
-        labels:pieChartData.map((item)=>item._id),
+        labels: pieChartData.map((item) => item._id),
         datasets: [
           {
             label: "Dataset 1",
-            data:pieChartData.map((item)=>item.count),
+            data: pieChartData.map((item) => item.count),
             backgroundColor: [
               "rgba(255, 99, 132, 0.2)",
               "rgba(54, 162, 235, 0.2)",
               "rgba(255, 206, 86, 0.2)",
-             ,
+              ,
             ],
             borderColor: [
               "rgba(255, 99, 132, 1)",
@@ -60,7 +54,7 @@ const PieChart = () => {
 
     return () => {
       chartInstance.destroy();
-    }
+    };
   }, [pieChartData]);
 
   return (

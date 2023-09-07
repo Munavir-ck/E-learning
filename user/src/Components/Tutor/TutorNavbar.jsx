@@ -7,21 +7,17 @@ import axios from "../../axios/axios";
 import { useDispatch } from "react-redux";
 import { setTutor } from "../../Store/Slice/tutorSlice";
 import { useNavigate } from "react-router-dom";
+import { get_wallet } from "../../API/tutor.Req";
 
 export default function Sidebar() {
   const dispatch = useDispatch();
   const navigate=useNavigate()
   const [wallet, setWallet] = useState("");
-  // const [open, setOpen] = useState(false);
   const studentName = useSelector((state) => state.tutor.name);
 
   useEffect(() => {
-    axios
-      .get("/tutor/get_wallet", {
-        headers: {
-          Authorization: localStorage.getItem("tutortoken"),
-        },
-      })
+    
+    get_wallet()
       .then((res) => {
         setWallet(res.data.wallet);
       });

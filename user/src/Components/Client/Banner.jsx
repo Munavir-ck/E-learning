@@ -10,7 +10,7 @@ function Banner() {
            initial={{opacity:0,y:30,x:100}}
            animate={{opacity:1, fontSize:50,x:50,y:-10}} 
            transition={{delay:0.5,type:'spring',stiffness:100}}
-          className="mt-20 ml-10  shadow-lg p-8">
+          className="mt-20 shadow-lg p-8">
             <h1 className="text-white text-2xl ">Kids Learning Center</h1>
             <h1 className="text-white font-bold text-6xl font-serif ">
               New Approach to Kids Education

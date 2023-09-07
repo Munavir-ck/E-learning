@@ -10,6 +10,7 @@ import { useSocket } from "../../contex/socketProvider";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { login } from "../../API/userReq";
 
 function Login() {
   const socket = useSocket();
@@ -52,12 +53,11 @@ function Login() {
 
     if (Object.keys(formErrors).length === 0) {
       setSubmit(true);
-      console.log(formValues);
-      axios
-        .post("/login", {
-          formValues,
-        })
+     
+      login(formValues)
         .then((res) => {
+
+          console.log("login success")
           if (res.data.status) {
            
             setSubmit(true);
@@ -70,11 +70,12 @@ function Login() {
                 _id:res.data.result._id,
                 image:res.data.result.image,
                 isLoggedIn: true,
+                token: res.data.token
               })
             );
             const student_id=res.data.result._id
             socket.emit('student:initial-connection',{student_id},student_id) 
-            //  console.log(someValue);
+         
             navigate("/");
           } else {
             setSubmit(false);

@@ -8,15 +8,15 @@ import BookingList_page from "../pages/Tutor/BookingList_page";
 import ChatRoomTutorPage from "../pages/Tutor/ChatRoomPage";
 import RoomPage from "../Components/screen/Room";
 import ErrorPage from '../Components/Admin/ErrorPage/ErrorPage';
+import { useSelector } from 'react-redux'
 
 
 function Teacher() {
- const[teacherToken,setTeacherToken]=useState("")
 
-useEffect(()=>{
-  const teacherToken = localStorage.getItem("tutortoken")
-  setTeacherToken(teacherToken)
-},[])
+
+
+  const teacherToken =useSelector((state) => state.tutor.token);
+
   return (
     <>
       <Routes>
